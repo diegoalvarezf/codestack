@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Server {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  longDesc    String?
+  repoUrl     String
+  npmPackage  String?
+  authorName  String
+  authorUrl   String?
+  license     String   @default("MIT")
+  version     String   @default("0.1.0")
+  tags        String   // JSON array stored as string
+  tools       String   // JSON array of MCP tool names
+  clients     String   // JSON array: "claude-code", "cursor", "continue"
+  transport   String   @default("stdio") // stdio | sse | http
+  stars       Int      @default(0)
+  verified    Boolean  @default(false)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  reviews     Review[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  serverId  String
+  server    Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  rating    Int      // 1-5
+  comment   String?
+  author    String
+  createdAt DateTime @default(now())
+}
