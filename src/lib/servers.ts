@@ -47,7 +47,9 @@ export async function getServers(opts?: {
     });
 }
 
-export async function getServer(slug: string): Promise<McpServer | null> {
+export async function getServer(
+  slug: string
+): Promise<(McpServer & { reviews: { id: string; rating: number; comment: string | null; author: string; createdAt: Date }[] }) | null> {
   const server = await prisma.server.findUnique({
     where: { slug },
     include: { reviews: { orderBy: { createdAt: "desc" } } },
@@ -58,5 +60,10 @@ export async function getServer(slug: string): Promise<McpServer | null> {
         (server.reviews.reduce((a, r) => a + r.rating, 0) / server.reviews.length) * 10
       ) / 10
     : undefined;
-  return { ...parse(server), avgRating, reviewCount: server.reviews.length };
+  return {
+    ...parse(server),
+    avgRating,
+    reviewCount: server.reviews.length,
+    reviews: server.reviews,
+  };
 }

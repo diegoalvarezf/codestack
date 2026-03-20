@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { getServer } from "@/lib/servers";
 import { SubmittedBanner } from "./SubmittedBanner";
+import { ReviewSection } from "@/components/ReviewSection";
 
 export const dynamic = "force-dynamic";
 
@@ -155,6 +156,15 @@ export default async function ServerPage({ params }: { params: { slug: string } 
           </div>
         </div>
       </div>
+
+      <ReviewSection
+        slug={server.slug}
+        initialReviews={server.reviews.map((r) => ({
+          ...r,
+          createdAt: r.createdAt.toISOString(),
+        }))}
+        avgRating={server.avgRating}
+      />
     </div>
   );
 }

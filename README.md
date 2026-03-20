@@ -38,7 +38,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - [x] Tag and client filters
 - [x] Submit a server (form + API)
 - [x] Public API (`GET /api/servers`, `POST /api/servers`)
-- [ ] Ratings and reviews
+- [x] Ratings and reviews (star rating + comments)
 - [ ] GitHub OAuth for publishing
 - [ ] CLI: `mcp publish`
 
