@@ -19,7 +19,7 @@ export default async function AdminPage({
     totalServers, verifiedServers,
     totalSkills, verifiedSkills,
     recentServers, recentSkills,
-    topDownloaded,
+    topDownloaded, auditServers,
   ] = await Promise.all([
     prisma.server.count(),
     prisma.server.count({ where: { verified: true } }),
@@ -39,6 +39,10 @@ export default async function AdminPage({
       orderBy: { downloadCount: "desc" },
       take: 5,
       select: { name: true, slug: true, downloadCount: true },
+    }),
+    prisma.server.findMany({
+      orderBy: [{ riskLevel: "asc" }, { downloadCount: "desc" }],
+      select: { id: true, name: true, slug: true, riskLevel: true, repoUrl: true, downloadCount: true },
     }),
   ]);
 
@@ -66,6 +70,7 @@ export default async function AdminPage({
         {[
           { id: "servers", label: "Servers" },
           { id: "skills", label: "Skills & Agents" },
+          { id: "audits", label: "🔒 Audits" },
         ].map(({ id, label }) => (
           <a
             key={id}
@@ -116,6 +121,43 @@ export default async function AdminPage({
             </div>
           </section>
         </>
+      )}
+
+      {/* Audits tab */}
+      {tab === "audits" && (
+        <section>
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">
+            Risk levels — {auditServers.length} servers
+          </h2>
+          <div className="space-y-2">
+            {auditServers.map((s) => (
+              <div key={s.id} className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-lg px-4 py-3 gap-4">
+                <div className="min-w-0 flex-1">
+                  <a href={`/server/${s.slug}`} className="text-sm text-white hover:text-blue-400 transition-colors">{s.name}</a>
+                  <p className="text-xs text-gray-600 font-mono truncate">
+                    {s.repoUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "")}
+                  </p>
+                </div>
+                <form action={`/api/admin/servers/${s.slug}/risk`} method="POST" className="flex items-center gap-2 shrink-0">
+                  <select
+                    name="level"
+                    defaultValue={s.riskLevel ?? "unknown"}
+                    className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-300 focus:outline-none focus:border-gray-500"
+                  >
+                    <option value="safe">✓ Safe</option>
+                    <option value="low">Low risk</option>
+                    <option value="medium">Medium risk</option>
+                    <option value="high">High risk</option>
+                    <option value="unknown">Unaudited</option>
+                  </select>
+                  <button type="submit" className="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
+                    Set
+                  </button>
+                </form>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Skills tab */}
