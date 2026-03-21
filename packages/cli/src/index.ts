@@ -6,6 +6,7 @@ import { searchCommand } from "./commands/search.js";
 import { listCommand } from "./commands/list.js";
 import { removeCommand } from "./commands/remove.js";
 import { syncCommand } from "./commands/sync.js";
+import { installSkillCommand } from "./commands/install-skill.js";
 
 const program = new Command();
 
@@ -59,6 +60,16 @@ program
   .option("--token <token>", "Invite token (skips interactive prompt)")
   .action(async (opts: { team?: string; token?: string }) => {
     await syncCommand(opts.team, opts.token).catch((err) => {
+      console.error(chalk.red("Error:"), err.message);
+      process.exit(1);
+    });
+  });
+
+program
+  .command("install-skill <slug>")
+  .description("Install a prompt or agent from MCPHub Skills")
+  .action(async (slug: string) => {
+    await installSkillCommand(slug).catch((err) => {
       console.error(chalk.red("Error:"), err.message);
       process.exit(1);
     });

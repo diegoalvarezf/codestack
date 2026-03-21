@@ -3,16 +3,24 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function SearchBar({ defaultValue }: { defaultValue?: string }) {
+export function SearchBar({
+  defaultValue,
+  baseUrl = "/",
+  placeholder = "Search servers, tools, tags...",
+}: {
+  defaultValue?: string;
+  baseUrl?: string;
+  placeholder?: string;
+}) {
   const router = useRouter();
   const [value, setValue] = useState(defaultValue ?? "");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim()) {
-      router.push(`/?q=${encodeURIComponent(value.trim())}`);
+      router.push(`${baseUrl}?q=${encodeURIComponent(value.trim())}`);
     } else {
-      router.push("/");
+      router.push(baseUrl);
     }
   };
 
@@ -22,7 +30,7 @@ export function SearchBar({ defaultValue }: { defaultValue?: string }) {
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="Search servers, tools, tags..."
+        placeholder={placeholder}
         className="w-full bg-gray-900 border border-gray-700 rounded-xl px-5 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors pr-12"
       />
       <button

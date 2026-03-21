@@ -36,6 +36,24 @@ model Server {
   reviews       Review[]
 }
 
+model Skill {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  description  String
+  type         String   @default("prompt") // "prompt" | "agent"
+  content      String   // markdown prompt / system prompt
+  tags         String   // JSON array
+  authorName   String
+  authorUrl    String?
+  repoUrl      String?
+  verified     Boolean  @default(false)
+  featured     Boolean  @default(false)
+  installCount Int      @default(0)
+  createdBy    String?  // githubLogin
+  createdAt    DateTime @default(now())
+}
+
 model Review {
   id        String   @id @default(cuid())
   serverId  String

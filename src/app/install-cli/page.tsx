@@ -9,7 +9,11 @@ export const metadata: Metadata = {
 const commands = [
   {
     cmd: "mcp install github",
-    desc: "Install a server — auto-detects clients, asks for required env vars",
+    desc: "Install an MCP server — auto-detects clients, asks for required env vars",
+  },
+  {
+    cmd: "mcp install-skill review-pr",
+    desc: "Install a prompt as a /slash-command or an agent into Claude Code",
   },
   {
     cmd: "mcp remove github",
@@ -25,7 +29,7 @@ const commands = [
   },
   {
     cmd: "mcp sync --team my-team",
-    desc: "Install all servers configured for your team (great for onboarding)",
+    desc: "Install all servers + skills configured for your team",
   },
 ];
 

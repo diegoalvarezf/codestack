@@ -1,4 +1,5 @@
 import { getServers } from "@/lib/servers";
+import { getSkills } from "@/lib/skills-db";
 import { ServerCard } from "@/components/ServerCard";
 import { SearchBar } from "@/components/SearchBar";
 import { Pagination } from "@/components/Pagination";
@@ -18,9 +19,10 @@ export default async function HomePage({
 
   const isFiltered = query || tag || client;
 
-  const [featuredResult, result] = await Promise.all([
+  const [featuredResult, result, featuredSkills] = await Promise.all([
     !isFiltered ? getServers({ featured: true }) : Promise.resolve({ servers: [], total: 0, pages: 0 }),
     getServers({ query, tag, client, page }),
+    !isFiltered ? getSkills({ featured: true }) : Promise.resolve({ skills: [], total: 0, pages: 0 }),
   ]);
 
   const featured = featuredResult.servers;
@@ -96,6 +98,39 @@ export default async function HomePage({
           ))}
         </div>
       </div>
+
+      {/* Skills preview */}
+      {!isFiltered && featuredSkills.skills.length > 0 && (
+        <section className="mb-10 sm:mb-12">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Skills & Agents</h2>
+            <a href="/skills" className="text-xs text-purple-400 hover:underline">View all →</a>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+            {featuredSkills.skills.slice(0, 4).map((skill) => (
+              <a
+                key={skill.id}
+                href={`/skills/${skill.slug}`}
+                className="group flex flex-col gap-1.5 p-3 rounded-xl border border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-white group-hover:text-purple-400 transition-colors truncate">
+                    {skill.name}
+                  </span>
+                  <span className={`text-xs px-1.5 py-0.5 rounded border shrink-0 ml-1 ${
+                    skill.type === "agent"
+                      ? "border-orange-500/20 text-orange-400"
+                      : "border-purple-500/20 text-purple-400"
+                  }`}>
+                    {skill.type}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 line-clamp-2">{skill.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Stacks */}
       {!isFiltered && (
