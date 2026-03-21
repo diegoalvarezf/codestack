@@ -23,7 +23,10 @@ export function ServerCard({ server, featured }: { server: McpServer; featured?:
           {server.installCmd && (
             <span className="text-xs text-green-400/70">● CLI</span>
           )}
-          {server.avgRating && (
+          {server.avgRating && server.reviewCount && server.reviewCount >= 3 && server.avgRating >= 4.5 && (
+            <span title={`★ ${server.avgRating} (${server.reviewCount} reviews)`} className="text-sm">⭐</span>
+          )}
+          {server.avgRating && server.reviewCount && (server.reviewCount < 3 || server.avgRating < 4.5) && (
             <span className="text-xs text-yellow-400">★ {server.avgRating}</span>
           )}
         </div>

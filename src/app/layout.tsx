@@ -16,7 +16,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span>MCPHub</span>
           </a>
           <div className="flex items-center gap-3 sm:gap-6 text-sm text-gray-400">
-            <a href="/" className="hover:text-white transition-colors">Browse</a>
             <a href="/submit" className="hover:text-white transition-colors">Submit</a>
             <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">CLI</a>
             <a
