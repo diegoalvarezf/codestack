@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { auth, signOut } from "@/lib/auth";
+import { auth } from "@/lib/auth";
+import { NavProfile } from "@/components/NavProfile";
 
 export const metadata: Metadata = {
   title: "MCPHub — Discover and install Model Context Protocol servers",
@@ -11,7 +12,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await auth();
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Apply saved theme before render to avoid flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.classList.add(t);})();`,
+          }}
+        />
+      </head>
       <body className="bg-gray-950 text-gray-100 min-h-screen antialiased">
         <nav className="border-b border-gray-800 px-4 sm:px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
@@ -20,7 +29,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </a>
           <div className="flex items-center gap-3 sm:gap-6 text-sm text-gray-400">
             <a href="/stacks" className="hover:text-white transition-colors hidden sm:block">Stacks</a>
-            <a href="/submit" className="hover:text-white transition-colors hidden sm:block">Submit</a>
             <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">CLI</a>
             <a
               href="https://modelcontextprotocol.io"
@@ -30,35 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             >
               Docs
             </a>
-            {session?.user ? (
-              <div className="flex items-center gap-3">
-                <a href="/library" className="hover:text-white transition-colors hidden sm:block">Library</a>
-                <a href="/teams" className="hover:text-white transition-colors hidden sm:block">Teams</a>
-                {session.user.role === "admin" && (
-                  <a href="/admin" className="text-yellow-400 hover:text-yellow-300 transition-colors hidden sm:block">
-                    Admin
-                  </a>
-                )}
-                <div className="flex items-center gap-2">
-                  {session.user.image && (
-                    <img src={session.user.image} alt="" className="w-7 h-7 rounded-full" />
-                  )}
-                  <span className="text-gray-300 hidden sm:block text-xs">{session.user.githubLogin}</span>
-                </div>
-                <form action={async () => { "use server"; await signOut({ redirectTo: "/" }); }}>
-                  <button type="submit" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
-                    Sign out
-                  </button>
-                </form>
-              </div>
-            ) : (
-              <a
-                href="/auth/signin"
-                className="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-md transition-colors text-gray-300"
-              >
-                Sign in
-              </a>
-            )}
+            <NavProfile user={session?.user ?? null} />
           </div>
         </nav>
         <main>{children}</main>

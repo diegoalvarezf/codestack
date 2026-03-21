@@ -11,3 +11,74 @@
     display: none;
   }
 }
+
+/* ─── Light mode overrides ──────────────────────────────────────────────────── */
+
+html.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Nav & footer */
+html.light nav,
+html.light footer {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+html.light nav a,
+html.light nav span {
+  color: #475569;
+}
+html.light nav a:hover {
+  color: #0f172a;
+}
+html.light .text-gray-400 { color: #64748b; }
+html.light .text-gray-500 { color: #94a3b8; }
+html.light .text-gray-300 { color: #334155; }
+html.light .text-gray-100 { color: #0f172a; }
+
+/* Surfaces */
+html.light .bg-gray-950 { background-color: #f8fafc; }
+html.light .bg-gray-900 { background-color: #ffffff; }
+html.light .bg-gray-800 { background-color: #f1f5f9; }
+
+/* Borders */
+html.light .border-gray-800 { border-color: #e2e8f0; }
+html.light .border-gray-700 { border-color: #cbd5e1; }
+
+/* Cards hover */
+html.light .hover\:bg-gray-800:hover { background-color: #f1f5f9; }
+html.light .hover\:bg-gray-700:hover { background-color: #e2e8f0; }
+html.light .hover\:border-gray-600:hover { border-color: #94a3b8; }
+
+/* Inputs */
+html.light input,
+html.light textarea,
+html.light select {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  color: #0f172a;
+}
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8;
+}
+html.light input:focus,
+html.light textarea:focus,
+html.light select:focus {
+  border-color: #94a3b8;
+}
+
+/* Code blocks */
+html.light code,
+html.light pre {
+  background-color: #f1f5f9;
+}
+html.light .bg-gray-950 code { background-color: #f1f5f9; }
+
+/* Dropdown */
+html.light .bg-gray-900.shadow-2xl {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
