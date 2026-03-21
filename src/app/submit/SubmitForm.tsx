@@ -40,9 +40,34 @@ export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
   // Skill/Agent fields
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
+  const [fetching, setFetching] = useState(false);
+  const [fetchError, setFetchError] = useState("");
 
   const color = TYPE_OPTIONS.find(t => t.id === type)!.color;
   const cm = colorMap[color];
+
+  async function fetchFromGitHub() {
+    if (!repoUrl) return;
+    const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) { setFetchError("Not a valid GitHub URL"); return; }
+    const [, owner, repo] = match;
+    const filename = type === "agent" ? "AGENT.md" : "SKILL.md";
+    setFetching(true);
+    setFetchError("");
+    for (const branch of ["main", "master"]) {
+      try {
+        const res = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`);
+        if (res.ok) {
+          const text = await res.text();
+          setContent(text);
+          setFetching(false);
+          return;
+        }
+      } catch {}
+    }
+    setFetchError(`${filename} not found in repo`);
+    setFetching(false);
+  }
 
   function toggleClient(c: string) {
     setClients(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
@@ -171,16 +196,29 @@ export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
           />
         </div>
 
-        <div className={type === "server" ? "sm:col-span-2" : "sm:col-span-2"}>
+        <div className="sm:col-span-2">
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
-            {type === "server" ? "Repository URL *" : "Repository URL (optional)"}
+            {type === "server" ? "Repository URL *" : "Repository URL"}
           </label>
-          <input
-            value={repoUrl} onChange={e => setRepoUrl(e.target.value)}
-            required={type === "server"} type="url"
-            placeholder="https://github.com/username/repo"
-            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500"
-          />
+          <div className="flex gap-2">
+            <input
+              value={repoUrl} onChange={e => setRepoUrl(e.target.value)}
+              required={type === "server"} type="url"
+              placeholder="https://github.com/username/repo"
+              className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500"
+            />
+            {type !== "server" && (
+              <button
+                type="button"
+                onClick={fetchFromGitHub}
+                disabled={!repoUrl || fetching}
+                className="shrink-0 px-4 py-2.5 text-sm border border-gray-700 rounded-lg text-gray-300 hover:text-white hover:border-gray-500 transition-colors disabled:opacity-40"
+              >
+                {fetching ? "Fetching..." : `Fetch ${type === "agent" ? "AGENT" : "SKILL"}.md`}
+              </button>
+            )}
+          </div>
+          {fetchError && <p className="text-xs text-red-400 mt-1">{fetchError}</p>}
         </div>
       </div>
 
@@ -279,9 +317,9 @@ export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
-              {type === "agent" ? "System prompt *" : "Prompt content *"}
+              {type === "agent" ? "AGENT.md content *" : "SKILL.md content *"}
             </label>
-            <span className="text-xs text-gray-600">Markdown supported</span>
+            <span className="text-xs text-gray-600">Fetched from repo or paste manually</span>
           </div>
           <textarea
             value={content} onChange={e => setContent(e.target.value)} required
