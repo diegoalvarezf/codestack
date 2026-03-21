@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { getServer } from "@/lib/servers";
 import { getT } from "@/lib/i18n";
 import { SubmittedBanner } from "./SubmittedBanner";
@@ -9,6 +10,25 @@ import { CopyButton } from "@/components/CopyButton";
 import { ExpandableConfig } from "./ExpandableConfig";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const server = await getServer(params.slug);
+  if (!server) return {};
+  const title = `${server.name} — MCPHub`;
+  const description = server.description;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://mcp-registry-sigma.vercel.app/server/${server.slug}`,
+      siteName: "MCPHub",
+      type: "website",
+    },
+    twitter: { card: "summary", title, description },
+  };
+}
 
 export default async function ServerPage({ params }: { params: { slug: string } }) {
   const [server, cookieStore] = await Promise.all([getServer(params.slug), cookies()]);
