@@ -54,10 +54,11 @@ program
 
 program
   .command("sync")
-  .description("Sync MCP servers for a team")
+  .description("Sync MCP servers and skills for a team")
   .option("-t, --team <slug>", "Team slug")
-  .action(async (opts: { team?: string }) => {
-    await syncCommand(opts.team).catch((err) => {
+  .option("--token <token>", "Invite token (skips interactive prompt)")
+  .action(async (opts: { team?: string; token?: string }) => {
+    await syncCommand(opts.team, opts.token).catch((err) => {
       console.error(chalk.red("Error:"), err.message);
       process.exit(1);
     });

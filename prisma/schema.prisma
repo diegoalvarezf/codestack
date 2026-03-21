@@ -67,6 +67,21 @@ model Team {
   createdAt   DateTime     @default(now())
   members     TeamMember[]
   servers     TeamServer[]
+  skills      TeamSkill[]
+}
+
+model TeamSkill {
+  id          String   @id @default(cuid())
+  teamId      String
+  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  name        String
+  slug        String   // used as slash command name, e.g. "review-pr"
+  type        String   @default("prompt") // "prompt" | "agent"
+  description String?
+  content     String   // markdown prompt content
+  addedAt     DateTime @default(now())
+
+  @@unique([teamId, slug])
 }
 
 model TeamMember {
