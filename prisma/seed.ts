@@ -663,6 +663,7 @@ const servers = [
     installCmd: "npx -y context-pilot serve",
     configJson: JSON.stringify({ command: "npx", args: ["-y", "context-pilot", "serve"] }),
     envVars: JSON.stringify([]),
+    createdBy: "sallyheller",
   },
 ];
 
