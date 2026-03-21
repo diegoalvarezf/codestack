@@ -16,17 +16,44 @@ export async function GET(_req: NextRequest, { params }: { params: { slug: strin
   return NextResponse.json(skill);
 }
 
-// PATCH — admin toggle verified/featured
+// PATCH — admin toggle verified/featured, or owner toggle published
 export async function PATCH(req: NextRequest, { params }: { params: { slug: string } }) {
   const session = await auth();
-  if (!session || session.user.role !== "admin") {
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await req.json();
+  const existing = await prisma.skill.findUnique({ where: { slug: params.slug } });
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const isAdmin = session.user.role === "admin";
+  const isOwner = session.user.githubLogin && existing.createdBy === session.user.githubLogin;
+
+  if (!isAdmin && !isOwner) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = await req.json();
+  // Owners can only toggle published; admins can change anything
+  const allowed = isAdmin ? body : { published: body.published };
   const skill = await prisma.skill.update({
     where: { slug: params.slug },
-    data: body,
+    data: allowed,
   });
   return NextResponse.json(skill);
+}
+
+// DELETE — owner or admin can delete
+export async function DELETE(_req: NextRequest, { params }: { params: { slug: string } }) {
+  const session = await auth();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const existing = await prisma.skill.findUnique({ where: { slug: params.slug } });
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const isAdmin = session.user.role === "admin";
+  const isOwner = session.user.githubLogin && existing.createdBy === session.user.githubLogin;
+
+  if (!isAdmin && !isOwner) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  await prisma.skill.delete({ where: { slug: params.slug } });
+  return NextResponse.json({ ok: true });
 }

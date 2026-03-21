@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getSkill, parseTags } from "@/lib/skills-db";
 import { CopyButton } from "@/components/CopyButton";
 import { AvatarImg } from "@/components/AvatarImg";
+import { MarkdownContent } from "@/components/MarkdownContent";
 import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -87,14 +88,12 @@ export default async function SkillPage({ params }: { params: { slug: string } }
 
           {/* Prompt content */}
           <section>
-            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Prompt content</h2>
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 relative">
-              <div className="absolute top-3 right-3">
-                <CopyButton text={skill.content} />
-              </div>
-              <pre className="text-sm text-gray-300 font-mono whitespace-pre-wrap leading-relaxed overflow-x-auto pr-8">
-                {skill.content}
-              </pre>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Prompt content</h2>
+              <CopyButton text={skill.content} />
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+              <MarkdownContent content={skill.content} />
             </div>
           </section>
         </div>

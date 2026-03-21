@@ -19,11 +19,16 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  const { slug, name, description, type, content, tags } = body;
+  const { slug, name, description, type, content, tags, repoUrl, published } = body;
 
   if (!slug || !name || !description || !content) {
     return NextResponse.json({ error: "slug, name, description, content required" }, { status: 400 });
   }
+
+  // Look up user ID from githubLogin
+  const user = session.user.githubLogin
+    ? await prisma.user.findUnique({ where: { githubLogin: session.user.githubLogin }, select: { id: true } })
+    : null;
 
   try {
     const skill = await prisma.skill.create({
@@ -34,9 +39,12 @@ export async function POST(req: NextRequest) {
         type: type ?? "prompt",
         content,
         tags: JSON.stringify(tags ?? []),
+        repoUrl: repoUrl ?? null,
         authorName: session.user.githubLogin ?? session.user.name ?? "unknown",
         authorUrl: `https://github.com/${session.user.githubLogin}`,
         createdBy: session.user.githubLogin,
+        published: published === true,
+        ownerId: user?.id ?? null,
       },
     });
     return NextResponse.json(skill, { status: 201 });

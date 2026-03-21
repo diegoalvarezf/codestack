@@ -70,7 +70,7 @@ export default async function SkillsPage({
           </div>
           <div className="mt-4 flex items-center justify-center gap-4 text-sm">
             <a href="/agents" className="text-orange-400 hover:underline">Looking for Agents? →</a>
-            <a href="/skills/submit" className="text-purple-400 hover:underline">Submit a skill →</a>
+            <a href="/submit?type=prompt" className="text-purple-400 hover:underline">Submit a skill →</a>
           </div>
         </div>
       )}
@@ -110,7 +110,7 @@ export default async function SkillsPage({
         </h2>
         {result.skills.length === 0 ? (
           <div className="text-center py-20 text-gray-500">
-            No skills found. <a href="/skills/submit" className="text-purple-400 hover:underline">Submit one!</a>
+            No skills found. <a href="/submit?type=prompt" className="text-purple-400 hover:underline">Submit one!</a>
           </div>
         ) : (
           <>

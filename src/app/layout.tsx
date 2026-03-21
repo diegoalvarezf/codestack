@@ -34,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </a>
             {session?.user ? (
               <div className="flex items-center gap-3">
+                <a href="/library" className="hover:text-white transition-colors hidden sm:block">Library</a>
                 <a href="/teams" className="hover:text-white transition-colors hidden sm:block">Teams</a>
                 {session.user.role === "admin" && (
                   <a href="/admin" className="text-yellow-400 hover:text-yellow-300 transition-colors hidden sm:block">

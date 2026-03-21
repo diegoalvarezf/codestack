@@ -11,9 +11,19 @@ export async function getSkills(opts?: {
   tag?: string;
   featured?: boolean;
   page?: number;
+  ownerId?: string;       // for personal library
+  includePrivate?: boolean; // show unpublished (owner only)
 }): Promise<{ skills: Skill[]; total: number; pages: number }> {
   const page = Math.max(1, opts?.page ?? 1);
   const where: any = {};
+
+  // Public registry always filters to published=true unless owner is viewing
+  if (opts?.ownerId && opts?.includePrivate) {
+    where.ownerId = opts.ownerId;
+  } else {
+    where.published = true;
+  }
+
   if (opts?.featured) where.featured = true;
   if (opts?.type) where.type = opts.type;
   if (opts?.tag) where.tags = { contains: opts.tag };

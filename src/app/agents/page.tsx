@@ -85,7 +85,7 @@ export default async function AgentsPage({
           </div>
 
           <div className="mt-4 flex items-center justify-center gap-4 text-sm">
-            <a href="/agents/submit" className="text-orange-400 hover:underline">Submit an agent →</a>
+            <a href="/submit?type=agent" className="text-orange-400 hover:underline">Submit an agent →</a>
           </div>
         </div>
       )}
@@ -125,7 +125,7 @@ export default async function AgentsPage({
         </h2>
         {result.skills.length === 0 ? (
           <div className="text-center py-20 text-gray-500">
-            No agents found. <a href="/agents/submit" className="text-orange-400 hover:underline">Submit one!</a>
+            No agents found. <a href="/submit?type=agent" className="text-orange-400 hover:underline">Submit one!</a>
           </div>
         ) : (
           <>
