@@ -4,6 +4,16 @@ import { STACKS } from "@/lib/stacks";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { getT } from "@/lib/i18n";
+import { IconZap, IconSearch, IconDatabase, IconRocket, IconClipboard, IconShield } from "@/components/Icons";
+
+const STACK_ICONS: Record<string, { icon: React.ReactNode; bg: string }> = {
+  "full-stack-dev":   { icon: <IconZap size={18} />,       bg: "bg-blue-500/20 text-blue-400 border-blue-500/20" },
+  "research":         { icon: <IconSearch size={18} />,     bg: "bg-purple-500/20 text-purple-400 border-purple-500/20" },
+  "data-engineering": { icon: <IconDatabase size={18} />,   bg: "bg-cyan-500/20 text-cyan-400 border-cyan-500/20" },
+  "devops":           { icon: <IconRocket size={18} />,     bg: "bg-orange-500/20 text-orange-400 border-orange-500/20" },
+  "product-team":     { icon: <IconClipboard size={18} />,  bg: "bg-green-500/20 text-green-400 border-green-500/20" },
+  "security":         { icon: <IconShield size={18} />,     bg: "bg-red-500/20 text-red-400 border-red-500/20" },
+};
 
 export const metadata: Metadata = {
   title: "Stacks — MCPHub",
@@ -55,7 +65,9 @@ export default async function StacksPage() {
             <a key={stack.slug} href={`/stacks/${stack.slug}`}
               className="group block rounded-xl border border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all hover:-translate-y-0.5 p-5">
               <div className="flex items-start gap-3 mb-3">
-                <span className="text-2xl">{stack.icon}</span>
+                <span className={`flex items-center justify-center w-9 h-9 rounded-lg border shrink-0 ${STACK_ICONS[stack.slug]?.bg ?? "bg-gray-800 text-gray-400 border-gray-700"}`}>
+                  {STACK_ICONS[stack.slug]?.icon ?? stack.icon}
+                </span>
                 <div>
                   <h2 className="font-semibold text-white group-hover:text-blue-400 transition-colors">{stack.name}</h2>
                   <div className="flex items-center gap-2 mt-0.5">
@@ -90,7 +102,9 @@ export default async function StacksPage() {
                 <a key={stack.slug} href={`/stacks/${stack.slug}`}
                   className="group block rounded-xl border border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all hover:-translate-y-0.5 p-5">
                   <div className="flex items-start gap-3 mb-3">
-                    <span className="text-2xl">{stack.icon}</span>
+                    <span className="flex items-center justify-center w-9 h-9 rounded-lg border bg-gray-800 border-gray-700 text-gray-300 font-semibold text-sm shrink-0">
+                      {stack.name[0]}
+                    </span>
                     <div>
                       <h2 className="font-semibold text-white group-hover:text-blue-400 transition-colors">{stack.name}</h2>
                       <div className="flex items-center gap-2 mt-0.5">

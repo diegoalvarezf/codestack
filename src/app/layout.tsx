@@ -4,7 +4,7 @@ import "./globals.css";
 import { auth } from "@/lib/auth";
 import { NavProfile } from "@/components/NavProfile";
 import { getT } from "@/lib/i18n";
-import { IconHexagon, IconShieldCheck } from "@/components/Icons";
+import { IconHexagon } from "@/components/Icons";
 
 export const metadata: Metadata = {
   title: "MCPHub — Discover and install Model Context Protocol servers",
@@ -33,10 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </a>
           <div className="flex items-center gap-3 sm:gap-6 text-sm text-gray-400">
             <a href="/stacks" className="hover:text-white transition-colors hidden sm:block">{t.stacks}</a>
-            <a href="/audits" className="hover:text-white transition-colors hidden md:block flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300">
-              <IconShieldCheck size={13} />
-              Audits
-            </a>
+            <a href="/audits" className="hover:text-white transition-colors hidden md:block text-sm">Audits</a>
             <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">{t.cli}</a>
             <a
               href="https://modelcontextprotocol.io"

@@ -14,17 +14,17 @@ export const dynamic = "force-dynamic";
 
 type Section = "mcps" | "skills" | "agents";
 
-const AGENT_LOGOS = [
-  { name: "Claude Code", icon: "🤖" },
-  { name: "Claude Desktop", icon: "🖥" },
-  { name: "Cursor", icon: "⌶" },
-  { name: "Continue", icon: "▶" },
-  { name: "Cline", icon: "⚡" },
-  { name: "Copilot", icon: "✈" },
-  { name: "Windsurf", icon: "🏄" },
-  { name: "Ollama", icon: "🦙" },
-  { name: "Open WebUI", icon: "🌐" },
-  { name: "Zed", icon: "⚡" },
+const CLIENTS = [
+  { name: "Claude Code",   color: "text-orange-400" },
+  { name: "Claude Desktop",color: "text-orange-300" },
+  { name: "Cursor",        color: "text-blue-400" },
+  { name: "Continue",      color: "text-green-400" },
+  { name: "Cline",         color: "text-purple-400" },
+  { name: "Copilot",       color: "text-gray-300" },
+  { name: "Windsurf",      color: "text-cyan-400" },
+  { name: "Ollama",        color: "text-yellow-400" },
+  { name: "Open WebUI",    color: "text-pink-400" },
+  { name: "Zed",           color: "text-indigo-400" },
 ];
 
 export default async function HomePage({
@@ -145,18 +145,20 @@ export default async function HomePage({
             <a href="/install-cli" className="text-sm text-blue-400 hover:underline">{t.allCommands}</a>
           </div>
 
-          {/* Agent logos */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
-            {AGENT_LOGOS.map((agent) => (
-              <span
-                key={agent.name}
-                title={agent.name}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-900 border border-gray-800 text-xs text-gray-400 hover:border-gray-600 hover:text-gray-200 transition-colors"
-              >
-                <span>{agent.icon}</span>
-                <span>{agent.name}</span>
-              </span>
-            ))}
+          {/* Compatible clients — scrolling ticker */}
+          <div className="mt-10 relative overflow-hidden" style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
+            <p className="text-xs text-gray-600 uppercase tracking-widest mb-4 text-center">Works with</p>
+            <div className="flex gap-6 animate-marquee whitespace-nowrap">
+              {[...CLIENTS, ...CLIENTS].map((client, i) => (
+                <span
+                  key={i}
+                  className={`inline-flex items-center gap-2 text-sm font-medium ${client.color} opacity-70 hover:opacity-100 transition-opacity`}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-current inline-block" />
+                  {client.name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       )}

@@ -5,6 +5,15 @@ const config: Config = {
   darkMode: "class",
   theme: {
     extend: {
+      animation: {
+        marquee: "marquee 28s linear infinite",
+      },
+      keyframes: {
+        marquee: {
+          "0%":   { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+      },
       colors: {
         // Neutral black palette — no blue tint (inspired by Vercel/GitHub dark)
         gray: {
