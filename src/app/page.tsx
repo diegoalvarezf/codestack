@@ -34,7 +34,6 @@ export default async function HomePage({
   ] as const;
 
   const SORT_TABS: { id: SortMode; label: string }[] = [
-    { id: "featured", label: t.sortFeatured },
     { id: "popular",  label: t.sortPopular },
     { id: "trending", label: t.sortTrending },
     { id: "hot",      label: t.sortHot },
@@ -46,7 +45,7 @@ export default async function HomePage({
   const tag = searchParams.tag;
   const client = searchParams.client;
   const page = parseInt(searchParams.page ?? "1");
-  const sort = (searchParams.sort as SortMode) ?? "featured";
+  const sort = (searchParams.sort as SortMode) ?? "popular";
   const view = searchParams.view === "list" ? "list" : "grid";
   const isFiltered = query || tag || client;
 
@@ -56,7 +55,7 @@ export default async function HomePage({
     if (query) params.set("q", query);
     if (tag) params.set("tag", tag);
     if (client) params.set("client", client);
-    if (sort !== "featured") params.set("sort", sort);
+    if (sort !== "popular") params.set("sort", sort);
     if (view !== "grid") params.set("view", view);
     if (p > 1) params.set("page", String(p));
     Object.entries(extra ?? {}).forEach(([k, v]) => params.set(k, v));
@@ -78,33 +77,24 @@ export default async function HomePage({
   function viewUrl(v: "grid" | "list") {
     const params = new URLSearchParams();
     params.set("section", section);
-    if (sort !== "featured") params.set("sort", sort);
+    if (sort !== "popular") params.set("sort", sort);
     if (query) params.set("q", query);
     if (tag) params.set("tag", tag);
     params.set("view", v);
     return `/?${params.toString()}`;
   }
 
-  const [featuredServers, serversResult] = section === "mcps"
-    ? await Promise.all([
-        !isFiltered ? getServers({ featured: true }) : Promise.resolve({ servers: [], total: 0, pages: 0 }),
-        getServers({ query, tag, client, page, sort }),
-      ])
-    : [{ servers: [], total: 0, pages: 0 }, { servers: [], total: 0, pages: 0 }];
+  const serversResult = section === "mcps"
+    ? await getServers({ query, tag, client, page, sort })
+    : { servers: [], total: 0, pages: 0 };
 
-  const [featuredSkills, skillsResult] = section === "skills"
-    ? await Promise.all([
-        !isFiltered ? getSkills({ featured: true, type: "prompt" }) : Promise.resolve({ skills: [], total: 0, pages: 0 }),
-        getSkills({ query, type: "prompt", tag, page, sort }),
-      ])
-    : [{ skills: [], total: 0, pages: 0 }, { skills: [], total: 0, pages: 0 }];
+  const skillsResult = section === "skills"
+    ? await getSkills({ query, type: "prompt", tag, page, sort })
+    : { skills: [], total: 0, pages: 0 };
 
-  const [featuredAgents, agentsResult] = section === "agents"
-    ? await Promise.all([
-        !isFiltered ? getSkills({ featured: true, type: "agent" }) : Promise.resolve({ skills: [], total: 0, pages: 0 }),
-        getSkills({ query, type: "agent", tag, page, sort }),
-      ])
-    : [{ skills: [], total: 0, pages: 0 }, { skills: [], total: 0, pages: 0 }];
+  const agentsResult = section === "agents"
+    ? await getSkills({ query, type: "agent", tag, page, sort })
+    : { skills: [], total: 0, pages: 0 };
 
   const totalCount = section === "mcps" ? serversResult.total
     : section === "skills" ? skillsResult.total
@@ -250,16 +240,6 @@ export default async function HomePage({
             </div>
           )}
 
-          {/* Featured */}
-          {!isFiltered && featuredServers.servers.length > 0 && (
-            <section className="mb-10">
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">{t.featured}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {featuredServers.servers.map((s) => <ServerCard key={s.id} server={s} featured />)}
-              </div>
-            </section>
-          )}
-
           <section>
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">
               {isFiltered ? `${totalCount} ${t.results}` : t.allServers}
@@ -285,7 +265,7 @@ export default async function HomePage({
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {serversResult.servers.map((s, i) => (
-                  <ServerCard key={s.id} server={s} rank={sort !== "featured" ? (page - 1) * 24 + i + 1 : undefined} />
+                  <ServerCard key={s.id} server={s} rank={(page - 1) * 24 + i + 1} />
                 ))}
               </div>
             )}
@@ -356,15 +336,6 @@ export default async function HomePage({
                 {t.submitSkill}
               </a>
             </div>
-          )}
-
-          {!isFiltered && featuredSkills.skills.length > 0 && (
-            <section className="mb-10">
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">{t.featured}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {featuredSkills.skills.map((s) => <SkillCard key={s.id} skill={s} featured />)}
-              </div>
-            </section>
           )}
 
           <section>
@@ -460,15 +431,6 @@ export default async function HomePage({
                 {t.submitAgent}
               </a>
             </div>
-          )}
-
-          {!isFiltered && featuredAgents.skills.length > 0 && (
-            <section className="mb-10">
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">{t.featured}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {featuredAgents.skills.map((s) => <AgentCard key={s.id} skill={s} featured />)}
-              </div>
-            </section>
           )}
 
           <section>
