@@ -5,7 +5,7 @@ import { fetchServer, incrementDownload } from "../lib/api.js";
 import { detectClients, type DetectedClient } from "../lib/detect.js";
 import { installForClient, isAlreadyInstalled } from "../lib/config.js";
 
-export async function installCommand(slug: string) {
+export async function installCommand(slug: string, envOverrides: Record<string, string> = {}) {
   const spinner = ora(`Buscando ${chalk.bold(slug)} en MCPHub...`).start();
 
   const server = await fetchServer(slug).catch(() => null);
@@ -20,25 +20,30 @@ export async function installCommand(slug: string) {
   );
   console.log(chalk.gray(`  ${server.description}\n`));
 
-  // Env vars
-  const envValues: Record<string, string> = {};
+  // Env vars — use overrides first, prompt only for missing required ones
+  const envValues: Record<string, string> = { ...envOverrides };
   if (server.envVars && server.envVars.length > 0) {
-    console.log(chalk.yellow("Variables de entorno requeridas:"));
-    for (const ev of server.envVars) {
-      const { value } = await inquirer.prompt<{ value: string }>([
-        {
-          type: "input",
-          name: "value",
-          message: `${chalk.cyan(ev.name)}${ev.required ? "" : chalk.gray(" (opcional)")} — ${ev.description}${ev.example ? chalk.gray(` (ej: ${ev.example})`) : ""}:`,
-          validate: (input: string) => {
-            if (ev.required && !input.trim()) return "Este campo es obligatorio";
-            return true;
+    const missing = server.envVars.filter(
+      (ev) => ev.required && !envValues[ev.name]?.trim()
+    );
+    if (missing.length > 0) {
+      console.log(chalk.yellow("Required environment variables:"));
+      for (const ev of missing) {
+        const { value } = await inquirer.prompt<{ value: string }>([
+          {
+            type: "input",
+            name: "value",
+            message: `${chalk.cyan(ev.name)} — ${ev.description}${ev.example ? chalk.gray(` (e.g. ${ev.example})`) : ""}:`,
+            validate: (input: string) => {
+              if (!input.trim()) return "This field is required";
+              return true;
+            },
           },
-        },
-      ]);
-      if (value.trim()) envValues[ev.name] = value.trim();
+        ]);
+        if (value.trim()) envValues[ev.name] = value.trim();
+      }
+      console.log();
     }
-    console.log();
   }
 
   // Detectar clientes

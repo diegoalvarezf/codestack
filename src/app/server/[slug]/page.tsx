@@ -6,8 +6,7 @@ import { getServer } from "@/lib/servers";
 import { getT } from "@/lib/i18n";
 import { SubmittedBanner } from "./SubmittedBanner";
 import { ReviewSection } from "@/components/ReviewSection";
-import { CopyButton } from "@/components/CopyButton";
-import { ExpandableConfig } from "./ExpandableConfig";
+import { InstallPanel } from "./InstallPanel";
 import { IconGitHub, IconExternalLink } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
@@ -93,67 +92,18 @@ export default async function ServerPage({ params }: { params: { slug: string } 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Install with MCPHub CLI */}
+          {/* Install panel */}
           {server.installCmd && (
             <section>
               <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">
-                {t.installWithCli}
+                Install
               </h2>
-              <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 font-mono text-sm flex items-center justify-between gap-4">
-                <div>
-                  <span className="text-gray-500">$ </span>
-                  <span className="text-green-400">mcp install {server.slug}</span>
-                </div>
-                <CopyButton text={`mcp install ${server.slug}`} />
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                {t.installAutoDesc}{" "}
-                <a href="/install-cli" className="text-blue-400 hover:underline">{t.getCli}</a>
-              </p>
-            </section>
-          )}
-
-          {/* Manual install — expandable config per client */}
-          {server.installCmd && (
-            <section>
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">
-                {t.manualInstall}
-              </h2>
-              <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 font-mono text-sm flex items-center justify-between gap-4 mb-3">
-                <div>
-                  <span className="text-gray-500">$ </span>
-                  <span className="text-blue-400">{server.installCmd}</span>
-                </div>
-                <CopyButton text={server.installCmd} />
-              </div>
-              <ExpandableConfig server={{ slug: server.slug, configJson: server.configJson }} />
-            </section>
-          )}
-
-          {/* Env vars */}
-          {server.envVars && server.envVars.length > 0 && (
-            <section>
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">
-                {t.requiredEnvVars}
-              </h2>
-              <div className="space-y-2">
-                {server.envVars.map((ev) => (
-                  <div key={ev.name} className="bg-gray-900 border border-gray-800 rounded-lg px-4 py-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-mono text-sm text-yellow-400">{ev.name}</span>
-                      {ev.required && (
-                        <span className="text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-1.5 py-0.5 rounded">
-                          {t.required}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-400">{ev.description}</p>
-                    {ev.example && (
-                      <p className="text-xs text-gray-600 font-mono mt-1">e.g. {ev.example}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
+              <InstallPanel
+                slug={server.slug}
+                installCmd={server.installCmd}
+                configJson={server.configJson}
+                envVars={server.envVars}
+              />
             </section>
           )}
 

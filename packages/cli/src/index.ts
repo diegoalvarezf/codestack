@@ -19,8 +19,14 @@ program
 program
   .command("install <slug>")
   .description("Install an MCP server from MCPHub")
-  .action(async (slug: string) => {
-    await installCommand(slug).catch((err) => {
+  .option("-e, --env <KEY=VALUE...>", "Set environment variables (skip interactive prompts)")
+  .action(async (slug: string, opts: { env?: string[] }) => {
+    const envOverrides: Record<string, string> = {};
+    for (const pair of opts.env ?? []) {
+      const eq = pair.indexOf("=");
+      if (eq > 0) envOverrides[pair.slice(0, eq)] = pair.slice(eq + 1);
+    }
+    await installCommand(slug, envOverrides).catch((err) => {
       console.error(chalk.red("Error:"), err.message);
       process.exit(1);
     });
