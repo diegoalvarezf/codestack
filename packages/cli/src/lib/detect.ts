@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 
-export type ClientId = "claude-code" | "claude-desktop" | "cursor" | "continue";
+export type ClientId = "claude-code" | "claude-desktop" | "cursor" | "continue" | "openclaw";
 
 export interface DetectedClient {
   id: ClientId;
@@ -34,6 +34,9 @@ const CLIENT_CONFIG_PATHS: Record<ClientId, string[]> = {
   continue: [
     "~/.continue/config.json",
   ],
+  openclaw: [
+    "~/.openclaw/openclaw.json",
+  ],
 };
 
 const CLIENT_LABELS: Record<ClientId, string> = {
@@ -41,6 +44,7 @@ const CLIENT_LABELS: Record<ClientId, string> = {
   "claude-desktop": "Claude Desktop",
   cursor: "Cursor",
   continue: "Continue.dev",
+  openclaw: "OpenClaw",
 };
 
 export function detectClients(): DetectedClient[] {

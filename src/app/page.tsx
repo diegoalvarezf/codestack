@@ -16,7 +16,7 @@ type Section = "mcps" | "skills" | "agents";
 
 const CLIENTS = [
   "Claude Code", "Claude Desktop", "Cursor", "Continue",
-  "Cline", "Copilot", "Windsurf", "Ollama", "Open WebUI", "Zed",
+  "OpenClaw", "Cline", "Copilot", "Windsurf", "Ollama", "Open WebUI", "Zed",
 ];
 
 export default async function HomePage({

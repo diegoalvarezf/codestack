@@ -4,13 +4,14 @@ import { useState } from "react";
 import { IconCheck, IconCopy, IconChevronDown, IconVSCode } from "@/components/Icons";
 import type { EnvVar } from "@/lib/types";
 
-type Client = "claude-code" | "claude-desktop" | "cursor" | "continue";
+type Client = "claude-code" | "claude-desktop" | "cursor" | "continue" | "openclaw";
 
 const CLIENT_LABELS: Record<Client, string> = {
   "claude-code":    "Claude Code",
   "claude-desktop": "Claude Desktop",
   cursor:           "Cursor",
   continue:         "Continue.dev",
+  openclaw:         "OpenClaw",
 };
 
 const CONFIG_PATHS: Record<Client, string> = {
@@ -18,6 +19,7 @@ const CONFIG_PATHS: Record<Client, string> = {
   "claude-desktop": "%APPDATA%\\Claude\\claude_desktop_config.json",
   cursor:           "~/.cursor/mcp.json",
   continue:         "~/.continue/config.json",
+  openclaw:         "~/.openclaw/openclaw.json",
 };
 
 interface Entry { command: string; args: string[]; env?: Record<string, string> }

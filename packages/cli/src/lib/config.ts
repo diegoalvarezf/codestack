@@ -48,7 +48,7 @@ export function installForClient(
   if (clientId === "continue") {
     installForContinue(configPath, server.slug, entry);
   } else {
-    // Claude Code, Claude Desktop, Cursor — todos usan formato mcpServers
+    // Claude Code, Claude Desktop, Cursor, OpenClaw — todos usan formato mcpServers
     installMcpServersFormat(configPath, server.slug, entry);
   }
 
