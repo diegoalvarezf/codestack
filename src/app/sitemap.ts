@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const [servers, skills] = await Promise.all([
     prisma.server.findMany({ select: { slug: true, updatedAt: true } }),
-    prisma.skill.findMany({ select: { slug: true, type: true, updatedAt: true } }),
+    prisma.skill.findMany({ select: { slug: true, type: true, createdAt: true } }),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const serverRoutes: MetadataRoute.Sitemap = servers.map((s) => ({
     url: `${BASE}/server/${s.slug}`,
     lastModified: s.updatedAt,
-    changeFrequency: "weekly",
+    changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
 
@@ -29,8 +29,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((s) => s.type === "prompt")
     .map((s) => ({
       url: `${BASE}/skills/${s.slug}`,
-      lastModified: s.updatedAt,
-      changeFrequency: "weekly",
+      lastModified: s.createdAt,
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
 
@@ -38,8 +38,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((s) => s.type === "agent")
     .map((s) => ({
       url: `${BASE}/agents/${s.slug}`,
-      lastModified: s.updatedAt,
-      changeFrequency: "weekly",
+      lastModified: s.createdAt,
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
 
