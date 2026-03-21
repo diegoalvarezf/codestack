@@ -19,12 +19,16 @@ export default async function ServerPage({ params }: { params: { slug: string } 
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <Suspense><SubmittedBanner /></Suspense>
+      {/* Back */}
+      <a href="/" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-6">
+        ← Back to MCPHub
+      </a>
       {/* Header */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3 mb-3">
-          <h1 className="text-3xl font-bold">{server.name}</h1>
+      <div className="mb-8 sm:mb-10">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
+          <h1 className="text-2xl sm:text-3xl font-bold">{server.name}</h1>
           {server.verified && (
             <span className="text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full">
               ✓ Verified
@@ -36,8 +40,8 @@ export default async function ServerPage({ params }: { params: { slug: string } 
             </span>
           )}
         </div>
-        <p className="text-gray-400 text-lg mb-4">{server.description}</p>
-        <div className="flex items-center gap-4 text-sm text-gray-500">
+        <p className="text-gray-400 text-base sm:text-lg mb-4">{server.description}</p>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-gray-500">
           <span>by {server.authorUrl
             ? <a href={server.authorUrl} className="text-blue-400 hover:underline">{server.authorName}</a>
             : server.authorName
@@ -55,7 +59,7 @@ export default async function ServerPage({ params }: { params: { slug: string } 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Install with MCPHub CLI */}

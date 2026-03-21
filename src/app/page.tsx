@@ -35,57 +35,68 @@ export default async function HomePage({
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       {/* Hero */}
       {!isFiltered && (
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-sm px-3 py-1 rounded-full mb-6 border border-blue-500/20">
+        <div className="text-center mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-sm px-3 py-1 rounded-full mb-5 border border-blue-500/20">
             <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" />
             {result.total.toLocaleString()} servers indexed
           </div>
-          <h1 className="text-5xl font-bold mb-4 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4 tracking-tight">
             Discover MCP Servers
           </h1>
-          <p className="text-gray-400 text-xl max-w-2xl mx-auto">
-            The open registry for{" "}
+          <p className="text-gray-400 text-base sm:text-xl max-w-2xl mx-auto px-2">
+            The open hub for{" "}
             <a href="https://modelcontextprotocol.io" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">
               Model Context Protocol
             </a>{" "}
-            servers. Find, publish, and rate servers for Claude Code, Cursor, Continue, and more.
+            servers. Find and install with one command.
           </p>
+          <div className="mt-5 flex items-center justify-center gap-3 flex-wrap">
+            <div className="bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 font-mono text-sm text-green-400">
+              npm install -g @mcphub/cli
+            </div>
+            <a href="/install-cli" className="text-sm text-blue-400 hover:underline">
+              Learn more →
+            </a>
+          </div>
         </div>
       )}
 
       {/* Search */}
-      <div className="max-w-2xl mx-auto mb-10">
+      <div className="max-w-2xl mx-auto mb-6 sm:mb-10">
         <SearchBar defaultValue={query} />
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 mb-10 flex-wrap">
-        {["claude-code", "cursor", "continue"].map((c) => (
-          <a key={c} href={client === c ? "/" : `/?client=${c}`}
-            className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-              client === c ? "bg-blue-500 border-blue-500 text-white" : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200"
-            }`}>
-            {c}
-          </a>
-        ))}
-        {["filesystem", "database", "search", "git", "browser", "memory", "api"].map((t) => (
-          <a key={t} href={tag === t ? "/" : `/?tag=${t}`}
-            className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-              tag === t ? "bg-purple-500 border-purple-500 text-white" : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200"
-            }`}>
-            #{t}
-          </a>
-        ))}
+      <div className="flex gap-2 mb-8 sm:mb-10 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-2 flex-nowrap">
+          {["claude-code", "cursor", "continue"].map((c) => (
+            <a key={c} href={client === c ? "/" : `/?client=${c}`}
+              className={`px-3 py-1.5 rounded-full text-sm border transition-colors whitespace-nowrap ${
+                client === c ? "bg-blue-500 border-blue-500 text-white" : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200"
+              }`}>
+              {c === "claude-code" ? "Claude Code" : c === "cursor" ? "Cursor" : "Continue"}
+            </a>
+          ))}
+          <div className="w-px bg-gray-800 mx-1" />
+          {["filesystem", "database", "search", "git", "browser", "memory", "api"].map((t) => (
+            <a key={t} href={tag === t ? "/" : `/?tag=${t}`}
+              className={`px-3 py-1.5 rounded-full text-sm border transition-colors whitespace-nowrap ${
+                tag === t ? "bg-purple-500 border-purple-500 text-white" : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200"
+              }`}>
+              #{t}
+            </a>
+          ))}
+        </div>
       </div>
 
       {/* Featured */}
       {!isFiltered && featured.length > 0 && (
-        <section className="mb-14">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-5">Featured</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <section className="mb-12 sm:mb-14">
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4 sm:mb-5">Featured</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {featured.map((s) => <ServerCard key={s.id} server={s} featured />)}
           </div>
         </section>
@@ -93,7 +104,7 @@ export default async function HomePage({
 
       {/* Results */}
       <section>
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-5">
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4 sm:mb-5">
           {isFiltered
             ? `${result.total.toLocaleString()} result${result.total !== 1 ? "s" : ""}${query ? ` for "${query}"` : ""}`
             : "All servers"}
@@ -105,7 +116,7 @@ export default async function HomePage({
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {result.servers.map((s) => <ServerCard key={s.id} server={s} />)}
             </div>
             <Pagination page={page} pages={result.pages} total={result.total} buildUrl={buildUrl} />
