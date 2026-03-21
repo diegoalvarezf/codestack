@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
       </head>
-      <body className="bg-gray-950 text-gray-100 min-h-screen antialiased">
+      <body className="bg-gray-900 text-gray-100 min-h-screen antialiased font-sans">
         <nav className="border-b border-gray-800 px-4 sm:px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
             <IconHexagon size={20} className="text-blue-400" />

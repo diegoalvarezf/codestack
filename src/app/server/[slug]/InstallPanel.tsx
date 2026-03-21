@@ -78,31 +78,27 @@ export function InstallPanel({ slug, installCmd, configJson, envVars }: Props) {
   return (
     <div className="space-y-3">
       {/* One-click installs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {/* VS Code */}
+      <div className="flex flex-wrap gap-2">
         {vscodeUri && (
           <a
             href={vscodeUri}
-            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-white text-xs font-medium transition-colors"
           >
-            <IconVSCode size={15} />
-            Install in VS Code
+            <IconVSCode size={13} />
+            VS Code
           </a>
         )}
-
-        {/* Claude Desktop — copy JSON config */}
-        <button
-          type="button"
-          onClick={() => copy(buildJsonConfig("claude-desktop", slug, configJson, installCmd), setJsonCopied)}
-          className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-orange-600/80 hover:bg-orange-500/80 text-white font-medium text-sm transition-colors"
-        >
-          {jsonCopied ? <IconCheck size={15} /> : (
-            <svg width={15} height={15} viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-            </svg>
-          )}
-          {jsonCopied ? "Copied!" : "Copy for Claude Desktop"}
-        </button>
+        {(["claude-desktop", "cursor"] as Client[]).map((c) => (
+          <button
+            key={c}
+            type="button"
+            onClick={() => copy(buildJsonConfig(c, slug, configJson, installCmd), setJsonCopied)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-white text-xs font-medium transition-colors"
+          >
+            {jsonCopied ? <IconCheck size={12} /> : <IconCopy size={12} />}
+            {CLIENT_LABELS[c]}
+          </button>
+        ))}
       </div>
 
       {/* Env vars hint */}
