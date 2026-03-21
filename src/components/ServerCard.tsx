@@ -1,3 +1,4 @@
+"use client";
 import type { McpServer } from "@/lib/types";
 
 function getGithubAvatar(repoUrl: string, authorUrl?: string | null): string | null {
