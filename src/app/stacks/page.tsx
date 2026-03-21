@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { STACKS } from "@/lib/stacks";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { getT } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "Stacks — MCPHub",
@@ -11,6 +13,9 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function StacksPage() {
+  const lang = (await cookies()).get("lang")?.value ?? "en";
+  const t = getT(lang);
+
   const [session, userStacks] = await Promise.all([
     auth(),
     prisma.userStack.findMany({
@@ -27,25 +32,24 @@ export default async function StacksPage() {
         <div>
           <div className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-400 text-sm px-3 py-1 rounded-full mb-5 border border-blue-500/20">
             <span className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
-            Curated &amp; community stacks
+            {t.stacksCuratedBadge}
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">Stacks</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3">{t.stacksTitle}</h1>
           <p className="text-gray-400 text-base sm:text-lg max-w-2xl">
-            Pre-configured mixes of MCP servers, skills, and agents for specific workflows.
-            Install an entire stack in one command.
+            {t.stacksDesc}
           </p>
         </div>
         {session && (
           <a href="/stacks/new"
             className="shrink-0 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-sm text-white transition-colors mt-1">
-            + Create stack
+            {t.createStack}
           </a>
         )}
       </div>
 
       {/* Curated stacks */}
       <section className="mb-12">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-5">Curated</h2>
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-5">{t.curatedStacks}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
           {STACKS.map((stack) => (
             <a key={stack.slug} href={`/stacks/${stack.slug}`}
@@ -56,13 +60,13 @@ export default async function StacksPage() {
                   <h2 className="font-semibold text-white group-hover:text-blue-400 transition-colors">{stack.name}</h2>
                   <div className="flex items-center gap-2 mt-0.5">
                     {stack.servers.length > 0 && (
-                      <span className="text-xs text-blue-400/70">{stack.servers.length} servers</span>
+                      <span className="text-xs text-blue-400/70">{stack.servers.length} {t.servers}</span>
                     )}
                     {stack.skills.length > 0 && (
-                      <span className="text-xs text-purple-400/70">{stack.skills.length} skills</span>
+                      <span className="text-xs text-purple-400/70">{stack.skills.length} {t.skills_label}</span>
                     )}
                     {stack.agents.length > 0 && (
-                      <span className="text-xs text-orange-400/70">{stack.agents.length} agents</span>
+                      <span className="text-xs text-orange-400/70">{stack.agents.length} {t.agents_label}</span>
                     )}
                   </div>
                 </div>
@@ -76,7 +80,7 @@ export default async function StacksPage() {
       {/* Community stacks */}
       {userStacks.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-5">Community</h2>
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-5">{t.communityStacks}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
             {userStacks.map((stack) => {
               const servers = stack.items.filter(i => i.type === "server").length;
@@ -90,10 +94,10 @@ export default async function StacksPage() {
                     <div>
                       <h2 className="font-semibold text-white group-hover:text-blue-400 transition-colors">{stack.name}</h2>
                       <div className="flex items-center gap-2 mt-0.5">
-                        {servers > 0 && <span className="text-xs text-blue-400/70">{servers} servers</span>}
-                        {skills > 0 && <span className="text-xs text-purple-400/70">{skills} skills</span>}
-                        {agents > 0 && <span className="text-xs text-orange-400/70">{agents} agents</span>}
-                        <span className="text-xs text-gray-600">by {stack.createdBy}</span>
+                        {servers > 0 && <span className="text-xs text-blue-400/70">{servers} {t.servers}</span>}
+                        {skills > 0 && <span className="text-xs text-purple-400/70">{skills} {t.skills_label}</span>}
+                        {agents > 0 && <span className="text-xs text-orange-400/70">{agents} {t.agents_label}</span>}
+                        <span className="text-xs text-gray-600">{t.by} {stack.createdBy}</span>
                       </div>
                     </div>
                   </div>
@@ -109,13 +113,13 @@ export default async function StacksPage() {
 
       {!session && (
         <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-6 text-center">
-          <h3 className="font-semibold text-white mb-2">Create your own stack</h3>
+          <h3 className="font-semibold text-white mb-2">{t.stacksCreateCta}</h3>
           <p className="text-sm text-gray-400 mb-4">
-            Mix servers, skills, and agents into a shareable workflow kit.
+            {t.stacksCreateDesc}
           </p>
           <a href="/auth/signin?callbackUrl=/stacks/new"
             className="inline-flex items-center gap-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-            Sign in to create →
+            {t.stacksSignIn}
           </a>
         </div>
       )}

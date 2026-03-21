@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { auth } from "@/lib/auth";
 import { NavProfile } from "@/components/NavProfile";
+import { getT } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "MCPHub — Discover and install Model Context Protocol servers",
@@ -9,12 +11,13 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
+  const [session, cookieStore] = await Promise.all([auth(), cookies()]);
+  const lang = cookieStore.get("lang")?.value ?? "en";
+  const t = getT(lang);
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <head>
-        {/* Apply saved theme before render to avoid flash */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.classList.add(t);})();`,
@@ -28,22 +31,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <span>MCPHub</span>
           </a>
           <div className="flex items-center gap-3 sm:gap-6 text-sm text-gray-400">
-            <a href="/stacks" className="hover:text-white transition-colors hidden sm:block">Stacks</a>
-            <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">CLI</a>
+            <a href="/stacks" className="hover:text-white transition-colors hidden sm:block">{t.stacks}</a>
+            <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">{t.cli}</a>
             <a
               href="https://modelcontextprotocol.io"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors hidden md:block"
             >
-              Docs
+              {t.docs}
             </a>
             <NavProfile user={session?.user ?? null} />
           </div>
         </nav>
         <main>{children}</main>
         <footer className="border-t border-gray-800 px-6 py-8 mt-20 text-center text-sm text-gray-500">
-          MCPHub — Open source. Built for the MCP community.
+          {t.footer}
         </footer>
       </body>
     </html>

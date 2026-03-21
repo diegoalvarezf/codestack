@@ -1,35 +1,11 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import {
+  Upload, BookOpen, Users, Settings2, Moon, Sun,
+  Globe, LogOut, LogIn, ChevronDown, Shield,
+} from "lucide-react";
 import { signOutAction } from "@/app/actions";
-
-const T = {
-  en: {
-    submit: "Submit",
-    library: "My Library",
-    teams: "Teams",
-    admin: "Admin",
-    theme: "Theme",
-    dark: "Dark",
-    light: "Light",
-    language: "Language",
-    signOut: "Sign out",
-    signIn: "Sign in",
-  },
-  es: {
-    submit: "Publicar",
-    library: "Mi Biblioteca",
-    teams: "Equipos",
-    admin: "Admin",
-    theme: "Tema",
-    dark: "Oscuro",
-    light: "Claro",
-    language: "Idioma",
-    signOut: "Cerrar sesión",
-    signIn: "Iniciar sesión",
-  },
-} as const;
-
-type Lang = keyof typeof T;
+import { getT, type Lang } from "@/lib/i18n";
 
 interface Props {
   user: {
@@ -46,7 +22,7 @@ export function NavProfile({ user }: Props) {
   const [lang, setLang] = useState<Lang>("en");
   const ref = useRef<HTMLDivElement>(null);
 
-  const t = T[lang];
+  const t = getT(lang);
 
   useEffect(() => {
     const savedTheme = (localStorage.getItem("theme") as "dark" | "light") ?? "dark";
@@ -64,24 +40,28 @@ export function NavProfile({ user }: Props) {
   }, []);
 
   function applyTheme(next: "dark" | "light") {
-    const html = document.documentElement;
-    html.classList.remove("dark", "light");
-    html.classList.add(next);
+    document.documentElement.classList.remove("dark", "light");
+    document.documentElement.classList.add(next);
     setTheme(next);
     localStorage.setItem("theme", next);
+    document.cookie = `theme=${next};path=/;max-age=31536000`;
   }
 
   function applyLang(next: Lang) {
     setLang(next);
     localStorage.setItem("lang", next);
+    document.cookie = `lang=${next};path=/;max-age=31536000`;
+    // Reload so server components pick up the new language
+    window.location.reload();
   }
 
   if (!user) {
     return (
       <a
         href="/auth/signin"
-        className="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-md transition-colors text-gray-300 text-sm"
+        className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg transition-colors text-gray-300 text-sm"
       >
+        <LogIn size={14} />
         {t.signIn}
       </a>
     );
@@ -91,13 +71,14 @@ export function NavProfile({ user }: Props) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2 rounded-full hover:ring-2 hover:ring-gray-700 transition-all p-0.5"
+        className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
         aria-label="Profile menu"
       >
         {user.image
           ? <img src={user.image} alt="" className="w-7 h-7 rounded-full" />
           : <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center text-xs text-gray-300">{user.githubLogin?.[0]?.toUpperCase()}</div>
         }
+        <ChevronDown size={12} className="text-gray-500" />
       </button>
 
       {open && (
@@ -110,11 +91,11 @@ export function NavProfile({ user }: Props) {
 
           {/* Nav items */}
           <div className="py-1">
-            <Item href="/submit" icon="✦" onClick={() => setOpen(false)}>{t.submit}</Item>
-            <Item href="/library" icon="◫" onClick={() => setOpen(false)}>{t.library}</Item>
-            <Item href="/teams" icon="◈" onClick={() => setOpen(false)}>{t.teams}</Item>
+            <DropItem href="/submit" icon={<Upload size={14} />} onClick={() => setOpen(false)}>{t.submit}</DropItem>
+            <DropItem href="/library" icon={<BookOpen size={14} />} onClick={() => setOpen(false)}>{t.library}</DropItem>
+            <DropItem href="/teams" icon={<Users size={14} />} onClick={() => setOpen(false)}>{t.teams}</DropItem>
             {user.role === "admin" && (
-              <Item href="/admin" icon="⚙" onClick={() => setOpen(false)} yellow>{t.admin}</Item>
+              <DropItem href="/admin" icon={<Shield size={14} />} onClick={() => setOpen(false)} yellow>{t.admin}</DropItem>
             )}
           </div>
 
@@ -126,7 +107,7 @@ export function NavProfile({ user }: Props) {
               className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
             >
               <span className="flex items-center gap-2.5">
-                <span className="text-base">{theme === "dark" ? "🌙" : "☀️"}</span>
+                {theme === "dark" ? <Moon size={14} className="text-gray-400" /> : <Sun size={14} className="text-gray-400" />}
                 {t.theme}
               </span>
               <span className="text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded-full">
@@ -137,7 +118,7 @@ export function NavProfile({ user }: Props) {
             {/* Language */}
             <div className="flex items-center justify-between px-4 py-2">
               <span className="flex items-center gap-2.5 text-sm text-gray-300">
-                <span className="text-base">🌐</span>
+                <Globe size={14} className="text-gray-400" />
                 {t.language}
               </span>
               <div className="flex gap-1">
@@ -165,7 +146,8 @@ export function NavProfile({ user }: Props) {
                 type="submit"
                 className="w-full text-left flex items-center gap-2.5 px-4 py-2 text-sm text-gray-500 hover:bg-gray-800 hover:text-gray-300 transition-colors"
               >
-                <span>↩</span> {t.signOut}
+                <LogOut size={14} />
+                {t.signOut}
               </button>
             </form>
           </div>
@@ -175,10 +157,14 @@ export function NavProfile({ user }: Props) {
   );
 }
 
-function Item({
+function DropItem({
   href, icon, children, onClick, yellow,
 }: {
-  href: string; icon: string; children: React.ReactNode; onClick?: () => void; yellow?: boolean;
+  href: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  onClick?: () => void;
+  yellow?: boolean;
 }) {
   return (
     <a
@@ -188,7 +174,7 @@ function Item({
         yellow ? "text-yellow-400 hover:text-yellow-300" : "text-gray-300 hover:text-white"
       }`}
     >
-      <span className="text-gray-500 text-xs w-3">{icon}</span>
+      <span className={yellow ? "text-yellow-500" : "text-gray-500"}>{icon}</span>
       {children}
     </a>
   );

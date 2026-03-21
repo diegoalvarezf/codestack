@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { getServers } from "@/lib/servers";
 import { getSkills } from "@/lib/skills-db";
 import { ServerCard } from "@/components/ServerCard";
@@ -5,22 +6,26 @@ import { SkillCard } from "@/components/SkillCard";
 import { AgentCard } from "@/components/AgentCard";
 import { SearchBar } from "@/components/SearchBar";
 import { Pagination } from "@/components/Pagination";
+import { getT } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 type Section = "mcps" | "skills" | "agents";
-
-const SECTIONS = [
-  { id: "mcps", label: "MCP Servers", color: "blue" },
-  { id: "skills", label: "Skills", color: "purple" },
-  { id: "agents", label: "Agents", color: "orange" },
-] as const;
 
 export default async function HomePage({
   searchParams,
 }: {
   searchParams: { q?: string; tag?: string; client?: string; page?: string; section?: string };
 }) {
+  const lang = (await cookies()).get("lang")?.value ?? "en";
+  const t = getT(lang);
+
+  const SECTIONS = [
+    { id: "mcps", label: t.sectionMcps, color: "blue" },
+    { id: "skills", label: t.sectionSkills, color: "purple" },
+    { id: "agents", label: t.sectionAgents, color: "orange" },
+  ] as const;
+
   const section: Section = (searchParams.section as Section) ?? "mcps";
   const query = searchParams.q;
   const tag = searchParams.tag;
@@ -80,17 +85,16 @@ export default async function HomePage({
       {!isFiltered && (
         <div className="text-center mb-10 sm:mb-12">
           <h1 className="text-3xl sm:text-5xl font-bold mb-4 tracking-tight">
-            Your AI Development Hub
+            {t.heroTitle}
           </h1>
           <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
-            Discover and install MCP servers, slash-command skills, and AI agents.
-            Everything your Claude Code or Cursor needs — in one place.
+            {t.heroDesc}
           </p>
           <div className="mt-5 flex items-center justify-center gap-3 flex-wrap">
             <div className="bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 font-mono text-sm text-green-400">
               npm install -g @mcphub/cli
             </div>
-            <a href="/install-cli" className="text-sm text-blue-400 hover:underline">All commands →</a>
+            <a href="/install-cli" className="text-sm text-blue-400 hover:underline">{t.allCommands}</a>
           </div>
         </div>
       )}
@@ -126,7 +130,7 @@ export default async function HomePage({
       {section === "mcps" && (
         <>
           <div className="max-w-2xl mx-auto mb-6">
-            <SearchBar defaultValue={query} baseUrl="/" placeholder="Search MCP servers..." />
+            <SearchBar defaultValue={query} baseUrl="/" placeholder={t.searchMcps} />
           </div>
 
           {/* Client filters */}
@@ -163,11 +167,12 @@ export default async function HomePage({
           {!isFiltered && (
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1 text-sm text-gray-400">
-                <span className="text-white font-medium">MCP Servers</span> connect Claude to external tools and data sources.
-                Run <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">mcp install github</code> to add any server instantly.
+                <span className="text-white font-medium">{t.mcpBannerTitle}</span> {t.mcpBannerDesc}{" "}
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">mcp install github</code>{" "}
+                {t.mcpBannerDesc2}
               </div>
               <a href="/submit" className="shrink-0 text-xs text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg hover:bg-blue-500/10 transition-colors">
-                Submit a server →
+                {t.submitServer}
               </a>
             </div>
           )}
@@ -175,7 +180,7 @@ export default async function HomePage({
           {/* Featured */}
           {!isFiltered && featuredServers.servers.length > 0 && (
             <section className="mb-10">
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Featured</h2>
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">{t.featured}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {featuredServers.servers.map((s) => <ServerCard key={s.id} server={s} featured />)}
               </div>
@@ -184,14 +189,14 @@ export default async function HomePage({
 
           <section>
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">
-              {isFiltered ? `${totalCount} results` : "All servers"}
+              {isFiltered ? `${totalCount} ${t.results}` : t.allServers}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {serversResult.servers.map((s) => <ServerCard key={s.id} server={s} />)}
             </div>
             {serversResult.servers.length === 0 && (
               <div className="text-center py-20 text-gray-500">
-                No servers found. <a href="/submit" className="text-blue-400 hover:underline">Submit one!</a>
+                {t.noServers} <a href="/submit" className="text-blue-400 hover:underline">{t.submitOne}</a>
               </div>
             )}
             <Pagination page={page} pages={totalPages} total={totalCount} buildUrl={buildUrl} />
@@ -203,7 +208,7 @@ export default async function HomePage({
       {section === "skills" && (
         <>
           <div className="max-w-2xl mx-auto mb-6">
-            <SearchBar defaultValue={query} baseUrl="/?section=skills" placeholder="Search skills..." />
+            <SearchBar defaultValue={query} baseUrl="/?section=skills" placeholder={t.searchSkills} />
           </div>
 
           <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide justify-center">
@@ -224,18 +229,20 @@ export default async function HomePage({
           {!isFiltered && (
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1 text-sm text-gray-400">
-                <span className="text-white font-medium">Skills</span> install as <code className="bg-gray-800 px-1.5 py-0.5 rounded text-purple-400 text-xs">/slash-commands</code> in Claude Code.
-                Run <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">mcp install-skill review-pr</code> and type <code className="bg-gray-800 px-1.5 py-0.5 rounded text-purple-400 text-xs">/review-pr</code> in any conversation.
+                <span className="text-white font-medium">{t.skillsBannerTitle}</span> {t.skillsBannerDesc}{" "}
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-purple-400 text-xs">/slash-commands</code> {t.skillsBannerDesc2}{" "}
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">mcp install-skill review-pr</code>{" "}
+                {t.skillsBannerDesc3} <code className="bg-gray-800 px-1.5 py-0.5 rounded text-purple-400 text-xs">/review-pr</code> {t.skillsBannerDesc4}
               </div>
               <a href="/submit?type=prompt" className="shrink-0 text-xs text-purple-400 border border-purple-500/30 px-3 py-1.5 rounded-lg hover:bg-purple-500/10 transition-colors">
-                Submit a skill →
+                {t.submitSkill}
               </a>
             </div>
           )}
 
           {!isFiltered && featuredSkills.skills.length > 0 && (
             <section className="mb-10">
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Featured</h2>
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">{t.featured}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {featuredSkills.skills.map((s) => <SkillCard key={s.id} skill={s} featured />)}
               </div>
@@ -244,14 +251,14 @@ export default async function HomePage({
 
           <section>
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">
-              {isFiltered ? `${totalCount} results` : "All skills"}
+              {isFiltered ? `${totalCount} ${t.results}` : t.allSkills}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {skillsResult.skills.map((s) => <SkillCard key={s.id} skill={s} />)}
             </div>
             {skillsResult.skills.length === 0 && (
               <div className="text-center py-20 text-gray-500">
-                No skills found. <a href="/submit?type=prompt" className="text-purple-400 hover:underline">Submit one!</a>
+                {t.noSkills} <a href="/submit?type=prompt" className="text-purple-400 hover:underline">{t.submitOne}</a>
               </div>
             )}
             <Pagination page={page} pages={totalPages} total={totalCount} buildUrl={buildUrl} />
@@ -263,7 +270,7 @@ export default async function HomePage({
       {section === "agents" && (
         <>
           <div className="max-w-2xl mx-auto mb-6">
-            <SearchBar defaultValue={query} baseUrl="/?section=agents" placeholder="Search agents..." />
+            <SearchBar defaultValue={query} baseUrl="/?section=agents" placeholder={t.searchAgents} />
           </div>
 
           <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide justify-center">
@@ -283,19 +290,20 @@ export default async function HomePage({
           {!isFiltered && (
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1 text-sm text-gray-400">
-                <span className="text-white font-medium">Agents</span> have a persistent system prompt and behavior.
-                Run <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">mcp install-skill senior-engineer</code> then
-                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-orange-400 text-xs ml-1">claude --agent senior-engineer</code>.
+                <span className="text-white font-medium">{t.agentsBannerTitle}</span> {t.agentsBannerDesc}{" "}
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">mcp install-skill senior-engineer</code>{" "}
+                {t.agentsBannerDesc2}{" "}
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-orange-400 text-xs">claude --agent senior-engineer</code>.
               </div>
               <a href="/submit?type=agent" className="shrink-0 text-xs text-orange-400 border border-orange-500/30 px-3 py-1.5 rounded-lg hover:bg-orange-500/10 transition-colors">
-                Submit an agent →
+                {t.submitAgent}
               </a>
             </div>
           )}
 
           {!isFiltered && featuredAgents.skills.length > 0 && (
             <section className="mb-10">
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Featured</h2>
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">{t.featured}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {featuredAgents.skills.map((s) => <AgentCard key={s.id} skill={s} featured />)}
               </div>
@@ -304,14 +312,14 @@ export default async function HomePage({
 
           <section>
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">
-              {isFiltered ? `${totalCount} results` : "All agents"}
+              {isFiltered ? `${totalCount} ${t.results}` : t.allAgents}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {agentsResult.skills.map((s) => <AgentCard key={s.id} skill={s} />)}
             </div>
             {agentsResult.skills.length === 0 && (
               <div className="text-center py-20 text-gray-500">
-                No agents found. <a href="/submit?type=agent" className="text-orange-400 hover:underline">Submit one!</a>
+                {t.noAgents} <a href="/submit?type=agent" className="text-orange-400 hover:underline">{t.submitOne}</a>
               </div>
             )}
             <Pagination page={page} pages={totalPages} total={totalCount} buildUrl={buildUrl} />
