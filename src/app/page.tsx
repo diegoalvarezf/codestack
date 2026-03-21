@@ -8,6 +8,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { Pagination } from "@/components/Pagination";
 import { getT } from "@/lib/i18n";
 import type { SortMode } from "@/lib/servers";
+import { IconGrid, IconList } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -237,10 +238,10 @@ export default async function HomePage({
               </div>
               <div className="flex gap-1 shrink-0 ml-3">
                 <a href={viewUrl("grid")} className={`p-2 rounded-lg transition-colors ${view === "grid" ? "bg-gray-800 text-white" : "text-gray-500 hover:text-gray-300"}`} title="Grid view">
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="0" width="6" height="6" rx="1"/><rect x="10" y="0" width="6" height="6" rx="1"/><rect x="0" y="10" width="6" height="6" rx="1"/><rect x="10" y="10" width="6" height="6" rx="1"/></svg>
+                  <IconGrid />
                 </a>
                 <a href={viewUrl("list")} className={`p-2 rounded-lg transition-colors ${view === "list" ? "bg-gray-800 text-white" : "text-gray-500 hover:text-gray-300"}`} title="List view">
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="1" width="16" height="2" rx="1"/><rect x="0" y="7" width="16" height="2" rx="1"/><rect x="0" y="13" width="16" height="2" rx="1"/></svg>
+                  <IconList />
                 </a>
               </div>
             </div>
@@ -345,10 +346,10 @@ export default async function HomePage({
               </div>
               <div className="flex gap-1 shrink-0 ml-3">
                 <a href={viewUrl("grid")} className={`p-2 rounded-lg transition-colors ${view === "grid" ? "bg-gray-800 text-white" : "text-gray-500 hover:text-gray-300"}`}>
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="0" width="6" height="6" rx="1"/><rect x="10" y="0" width="6" height="6" rx="1"/><rect x="0" y="10" width="6" height="6" rx="1"/><rect x="10" y="10" width="6" height="6" rx="1"/></svg>
+                  <IconGrid />
                 </a>
                 <a href={viewUrl("list")} className={`p-2 rounded-lg transition-colors ${view === "list" ? "bg-gray-800 text-white" : "text-gray-500 hover:text-gray-300"}`}>
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="1" width="16" height="2" rx="1"/><rect x="0" y="7" width="16" height="2" rx="1"/><rect x="0" y="13" width="16" height="2" rx="1"/></svg>
+                  <IconList />
                 </a>
               </div>
             </div>
@@ -449,10 +450,10 @@ export default async function HomePage({
               </div>
               <div className="flex gap-1 shrink-0 ml-3">
                 <a href={viewUrl("grid")} className={`p-2 rounded-lg transition-colors ${view === "grid" ? "bg-gray-800 text-white" : "text-gray-500 hover:text-gray-300"}`}>
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="0" width="6" height="6" rx="1"/><rect x="10" y="0" width="6" height="6" rx="1"/><rect x="0" y="10" width="6" height="6" rx="1"/><rect x="10" y="10" width="6" height="6" rx="1"/></svg>
+                  <IconGrid />
                 </a>
                 <a href={viewUrl("list")} className={`p-2 rounded-lg transition-colors ${view === "list" ? "bg-gray-800 text-white" : "text-gray-500 hover:text-gray-300"}`}>
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="1" width="16" height="2" rx="1"/><rect x="0" y="7" width="16" height="2" rx="1"/><rect x="0" y="13" width="16" height="2" rx="1"/></svg>
+                  <IconList />
                 </a>
               </div>
             </div>

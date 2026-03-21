@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { AutoAuditButton } from "./AutoAuditButton";
 
 export const dynamic = "force-dynamic";
 
@@ -138,22 +139,25 @@ export default async function AdminPage({
                     {s.repoUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "")}
                   </p>
                 </div>
-                <form action={`/api/admin/servers/${s.slug}/risk`} method="POST" className="flex items-center gap-2 shrink-0">
-                  <select
-                    name="level"
-                    defaultValue={s.riskLevel ?? "unknown"}
-                    className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-300 focus:outline-none focus:border-gray-500"
-                  >
-                    <option value="safe">✓ Safe</option>
-                    <option value="low">Low risk</option>
-                    <option value="medium">Medium risk</option>
-                    <option value="high">High risk</option>
-                    <option value="unknown">Unaudited</option>
-                  </select>
-                  <button type="submit" className="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
-                    Set
-                  </button>
-                </form>
+                <div className="flex items-center gap-2 shrink-0">
+                  <AutoAuditButton slug={s.slug} />
+                  <form action={`/api/admin/servers/${s.slug}/risk`} method="POST" className="flex items-center gap-2">
+                    <select
+                      name="level"
+                      defaultValue={s.riskLevel ?? "unknown"}
+                      className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-300 focus:outline-none focus:border-gray-500"
+                    >
+                      <option value="safe">✓ Safe</option>
+                      <option value="low">Low risk</option>
+                      <option value="medium">Medium risk</option>
+                      <option value="high">High risk</option>
+                      <option value="unknown">Unaudited</option>
+                    </select>
+                    <button type="submit" className="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
+                      Set
+                    </button>
+                  </form>
+                </div>
               </div>
             ))}
           </div>
@@ -244,3 +248,4 @@ function ToggleSkillFeatured({ slug, featured }: { slug: string; featured: boole
     </form>
   );
 }
+

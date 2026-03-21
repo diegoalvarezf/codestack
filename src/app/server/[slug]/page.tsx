@@ -8,6 +8,7 @@ import { SubmittedBanner } from "./SubmittedBanner";
 import { ReviewSection } from "@/components/ReviewSection";
 import { CopyButton } from "@/components/CopyButton";
 import { ExpandableConfig } from "./ExpandableConfig";
+import { IconGitHub, IconExternalLink } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -193,7 +194,9 @@ export default async function ServerPage({ params }: { params: { slug: string } 
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
             >
-              <span>⬡</span> {t.viewOnGitHub}
+              <IconGitHub size={15} className="shrink-0" />
+              {t.viewOnGitHub}
+              <IconExternalLink size={12} className="text-gray-600 ml-auto" />
             </a>
 
             <div>

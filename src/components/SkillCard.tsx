@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Skill } from "@prisma/client";
 import { parseTags } from "@/lib/skills-db";
 import { useT } from "@/lib/use-t";
+import { IconCheck, IconDownload } from "@/components/Icons";
 
 function getGithubAvatar(authorUrl?: string | null): string | null {
   if (!authorUrl) return null;
@@ -48,7 +49,7 @@ export function SkillCard({ skill, featured }: { skill: Skill; featured?: boolea
               {skill.name}
             </span>
             {skill.verified && (
-              <span title="Verified" className="text-purple-400 text-xs shrink-0">✓</span>
+              <span title="Verified" className="text-purple-400 shrink-0"><IconCheck size={12} /></span>
             )}
           </div>
           <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ml-2 ${
@@ -68,10 +69,7 @@ export function SkillCard({ skill, featured }: { skill: Skill; featured?: boolea
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5 mb-4">
           {tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700"
-            >
+            <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">
               #{tag}
             </span>
           ))}
@@ -81,7 +79,10 @@ export function SkillCard({ skill, featured }: { skill: Skill; featured?: boolea
         <div className="flex items-center justify-between text-xs text-gray-500">
           <span className="truncate">{skill.authorName}</span>
           {skill.installCount > 0 && (
-            <span className="shrink-0 ml-2">↓ {skill.installCount.toLocaleString()}</span>
+            <span className="shrink-0 ml-2 flex items-center gap-1">
+              <IconDownload size={11} />
+              {skill.installCount.toLocaleString()}
+            </span>
           )}
         </div>
       </a>
@@ -97,9 +98,9 @@ export function SkillCard({ skill, featured }: { skill: Skill; featured?: boolea
           }`}
         >
           {copied ? (
-            <><span>✓</span><span>{t.copied}</span></>
+            <><IconCheck size={13} /><span>{t.copied}</span></>
           ) : (
-            <><span>↓</span><span className="font-mono">{t.install}</span></>
+            <><IconDownload size={13} /><span className="font-mono">{t.install}</span></>
           )}
         </button>
       </div>

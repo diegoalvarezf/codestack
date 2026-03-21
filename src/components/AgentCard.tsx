@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Skill } from "@prisma/client";
 import { parseTags } from "@/lib/skills-db";
 import { useT } from "@/lib/use-t";
+import { IconCheck, IconDownload } from "@/components/Icons";
 
 function getGithubAvatar(authorUrl?: string | null): string | null {
   if (!authorUrl) return null;
@@ -45,7 +46,7 @@ export function AgentCard({ skill, featured }: { skill: Skill; featured?: boolea
               {skill.name}
             </span>
             {skill.verified && (
-              <span title="Verified" className="text-orange-400 text-xs shrink-0">✓</span>
+              <span title="Verified" className="text-orange-400 shrink-0"><IconCheck size={12} /></span>
             )}
           </div>
           <span className="text-xs px-2 py-0.5 rounded-full border bg-orange-500/10 border-orange-500/20 text-orange-400 shrink-0 ml-2">
@@ -69,7 +70,10 @@ export function AgentCard({ skill, featured }: { skill: Skill; featured?: boolea
         <div className="flex items-center justify-between text-xs text-gray-500">
           <span className="truncate">{skill.authorName}</span>
           {skill.installCount > 0 && (
-            <span className="shrink-0 ml-2">↓ {skill.installCount.toLocaleString()}</span>
+            <span className="shrink-0 ml-2 flex items-center gap-1">
+              <IconDownload size={11} />
+              {skill.installCount.toLocaleString()}
+            </span>
           )}
         </div>
       </a>
@@ -82,7 +86,10 @@ export function AgentCard({ skill, featured }: { skill: Skill; featured?: boolea
               ? "bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/30"
               : "bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700"
           }`}>
-          {copied ? <><span>✓</span><span>{t.copied}</span></> : <><span>↓</span><span className="font-mono">{t.install}</span></>}
+          {copied
+            ? <><IconCheck size={13} /><span>{t.copied}</span></>
+            : <><IconDownload size={13} /><span className="font-mono">{t.install}</span></>
+          }
         </button>
       </div>
     </div>

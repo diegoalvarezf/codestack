@@ -2,11 +2,15 @@
 import { useState } from "react";
 import type { McpServer } from "@/lib/types";
 import { useT } from "@/lib/use-t";
+import {
+  IconCheck, IconShieldCheck, IconShieldQuestion, IconShieldAlert,
+  IconStar, IconDownload, IconVSCode,
+} from "@/components/Icons";
 
 function getGithubAvatar(repoUrl: string, authorUrl?: string | null): string | null {
   for (const url of [authorUrl, repoUrl]) {
     if (!url) continue;
-    const match = url.match(/github\.com\/([^\/]+)/);
+    const match = url.match(/github\.com\/([^/]+)/);
     if (match) return `https://github.com/${match[1]}.png?size=40`;
   }
   return null;
@@ -30,9 +34,16 @@ const RISK_STYLES: Record<string, string> = {
   high:    "text-red-400 border-red-500/30 bg-red-500/10",
   unknown: "text-gray-500 border-gray-700 bg-gray-800/50",
 };
+
 const RISK_LABELS: Record<string, string> = {
   safe: "Safe", low: "Low risk", medium: "Medium risk", high: "High risk", unknown: "Unaudited",
 };
+
+function RiskIcon({ level }: { level: string }) {
+  if (level === "safe") return <IconShieldCheck size={12} />;
+  if (level === "unknown") return <IconShieldQuestion size={12} />;
+  return <IconShieldAlert size={12} />;
+}
 
 export function ServerCard({ server, featured, rank }: { server: McpServer; featured?: boolean; rank?: number }) {
   const t = useT();
@@ -76,18 +87,24 @@ export function ServerCard({ server, featured, rank }: { server: McpServer; feat
               {server.name}
             </span>
             {server.verified && (
-              <span title="Verified" className="text-blue-400 text-xs shrink-0">✓</span>
+              <span title="Verified" className="text-blue-400 shrink-0">
+                <IconCheck size={12} />
+              </span>
             )}
           </div>
           <div className="flex items-center gap-1.5 shrink-0 ml-2">
             {server.avgRating && server.reviewCount && server.reviewCount >= 3 && server.avgRating >= 4.5 && (
-              <span title={`★ ${server.avgRating} (${server.reviewCount} reviews)`} className="text-sm">⭐</span>
+              <span title={`★ ${server.avgRating} (${server.reviewCount} reviews)`} className="text-yellow-400">
+                <IconStar size={13} />
+              </span>
             )}
             {server.avgRating && server.reviewCount && (server.reviewCount < 3 || server.avgRating < 4.5) && (
-              <span className="text-xs text-yellow-400">★ {server.avgRating}</span>
+              <span className="text-xs text-yellow-400 flex items-center gap-0.5">
+                <IconStar size={11} /> {server.avgRating}
+              </span>
             )}
-            <span className={`text-xs px-1.5 py-0.5 rounded border ${riskStyle}`} title={`Security: ${riskLabel}`}>
-              {server.riskLevel === "safe" ? "✓" : server.riskLevel === "unknown" ? "?" : "!"}
+            <span className={`flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded border ${riskStyle}`} title={`Security: ${riskLabel}`}>
+              <RiskIcon level={server.riskLevel} />
             </span>
           </div>
         </div>
@@ -114,7 +131,10 @@ export function ServerCard({ server, featured, rank }: { server: McpServer; feat
           <span className="truncate">{server.authorName}</span>
           <div className="flex items-center gap-2 shrink-0 ml-2">
             {server.downloadCount > 0 && (
-              <span>↓ {server.downloadCount.toLocaleString()}</span>
+              <span className="flex items-center gap-1">
+                <IconDownload size={11} />
+                {server.downloadCount.toLocaleString()}
+              </span>
             )}
             <span className="font-mono">{server.transport}</span>
           </div>
@@ -135,9 +155,7 @@ export function ServerCard({ server, featured, rank }: { server: McpServer; feat
                   : "bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700"
               }`}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
-                <path d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 19.88V4.12a1.5 1.5 0 0 0-.85-1.533zM16.498 20.38l-7.3-6.663L16.5 7.02z"/>
-              </svg>
+              <IconVSCode size={13} className="shrink-0" />
               VS Code
             </a>
           ) : null}
@@ -154,9 +172,9 @@ export function ServerCard({ server, featured, rank }: { server: McpServer; feat
             }`}
           >
             {copied ? (
-              <><span>✓</span><span>{t.copied}</span></>
+              <><IconCheck size={13} /><span>{t.copied}</span></>
             ) : (
-              <><span>↓</span><span className="font-mono">{t.install}</span></>
+              <><IconDownload size={13} /><span className="font-mono">{t.install}</span></>
             )}
           </button>
         </div>
