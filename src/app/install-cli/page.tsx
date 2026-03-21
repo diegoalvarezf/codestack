@@ -16,6 +16,10 @@ const commands = [
     desc: "Install a prompt as a /slash-command or an agent into Claude Code",
   },
   {
+    cmd: "mcp install-stack full-stack-dev",
+    desc: "Install an entire stack — all servers, skills, and agents in one command",
+  },
+  {
     cmd: "mcp remove github",
     desc: "Remove a server from one or all clients",
   },

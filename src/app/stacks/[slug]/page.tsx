@@ -71,11 +71,7 @@ export default async function StackPage({ params }: { params: { slug: string } }
   const orderedAgents = agentSlugs.map(slug => skills.find(s => s.slug === slug)).filter(Boolean) as Skill[];
 
   const totalItems = orderedServers.length + orderedSkills.length + orderedAgents.length;
-
-  const serverCmds = orderedServers.map(s => `mcp install ${s.slug}`).join(" && ");
-  const skillCmds = orderedSkills.map(s => `mcp install-skill ${s.slug}`).join(" && ");
-  const agentCmds = orderedAgents.map(s => `mcp install-skill ${s.slug}`).join(" && ");
-  const allCmds = [serverCmds, skillCmds, agentCmds].filter(Boolean).join(" && ");
+  const installCmd = `mcp install-stack ${params.slug}`;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
@@ -114,18 +110,16 @@ export default async function StackPage({ params }: { params: { slug: string } }
         </div>
       </div>
 
-      {allCmds && (
+      {totalItems > 0 && (
         <section className="mb-10">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Install entire stack</h2>
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
             <p className="text-xs text-gray-500 mb-3">
-              Installs all {totalItems} items with the MCPHub CLI.
+              Installs all {totalItems} items — servers, skills, and agents — in one command.
             </p>
-            <div className="flex items-start justify-between gap-4">
-              <pre className="font-mono text-sm text-green-400 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
-                <span className="text-gray-500">$ </span>{allCmds.replace(/ && /g, " &&\n  ")}
-              </pre>
-              <CopyButton text={allCmds} />
+            <div className="flex items-center justify-between gap-4 bg-gray-950 rounded-lg px-4 py-3">
+              <span className="font-mono text-sm text-green-400">{installCmd}</span>
+              <CopyButton text={installCmd} />
             </div>
             <p className="text-xs text-gray-600 mt-3">
               Requires <a href="/install-cli" className="text-blue-400/70 hover:text-blue-400">MCPHub CLI</a>

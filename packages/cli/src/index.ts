@@ -7,6 +7,7 @@ import { listCommand } from "./commands/list.js";
 import { removeCommand } from "./commands/remove.js";
 import { syncCommand } from "./commands/sync.js";
 import { installSkillCommand } from "./commands/install-skill.js";
+import { installStackCommand } from "./commands/install-stack.js";
 
 const program = new Command();
 
@@ -70,6 +71,16 @@ program
   .description("Install a prompt or agent from MCPHub Skills")
   .action(async (slug: string) => {
     await installSkillCommand(slug).catch((err) => {
+      console.error(chalk.red("Error:"), err.message);
+      process.exit(1);
+    });
+  });
+
+program
+  .command("install-stack <slug>")
+  .description("Install all servers, skills, and agents in a stack")
+  .action(async (slug: string) => {
+    await installStackCommand(slug).catch((err) => {
       console.error(chalk.red("Error:"), err.message);
       process.exit(1);
     });
