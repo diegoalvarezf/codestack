@@ -14,11 +14,9 @@ export default async function SubmitPage({
 }: {
   searchParams: { type?: string };
 }) {
-  const [session, lang] = await Promise.all([
-    auth(),
-    cookies().then(c => c.get("lang")?.value ?? "en"),
-  ]);
+  const [session, cookieStore] = await Promise.all([auth(), cookies()]);
   if (!session) redirect("/auth/signin?callbackUrl=/submit");
+  const lang = cookieStore.get("lang")?.value ?? "en";
   const t = getT(lang);
 
   const defaultType = (searchParams.type === "prompt" || searchParams.type === "agent") ? searchParams.type : "server";
