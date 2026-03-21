@@ -13,14 +13,18 @@ function parse(server: any): McpServer {
   };
 }
 
+export type SortMode = "featured" | "popular" | "trending" | "hot" | "new";
+
 export async function getServers(opts?: {
   query?: string;
   tag?: string;
   client?: string;
   featured?: boolean;
   page?: number;
+  sort?: SortMode;
 }): Promise<{ servers: McpServer[]; total: number; pages: number }> {
   const page = Math.max(1, opts?.page ?? 1);
+  const sort = opts?.sort ?? "featured";
   const where: any = {};
   if (opts?.featured) where.featured = true;
   if (opts?.tag) where.tags = { contains: opts.tag };
@@ -34,11 +38,18 @@ export async function getServers(opts?: {
     ];
   }
 
+  const orderBy: any[] =
+    sort === "popular"  ? [{ downloadCount: "desc" }, { stars: "desc" }] :
+    sort === "trending" ? [{ weeklyInstalls: "desc" }, { downloadCount: "desc" }] :
+    sort === "hot"      ? [{ dailyInstalls: "desc" }, { weeklyInstalls: "desc" }] :
+    sort === "new"      ? [{ createdAt: "desc" }] :
+    /* featured */        [{ featured: "desc" }, { stars: "desc" }, { createdAt: "desc" }];
+
   const [total, servers] = await Promise.all([
     prisma.server.count({ where }),
     prisma.server.findMany({
       where,
-      orderBy: [{ featured: "desc" }, { stars: "desc" }, { createdAt: "desc" }],
+      orderBy,
       include: { reviews: { select: { rating: true } } },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,

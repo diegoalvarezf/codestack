@@ -4,6 +4,7 @@ import type { Skill } from "@prisma/client";
 const PAGE_SIZE = 24;
 
 export type { Skill };
+export type SortMode = "featured" | "popular" | "trending" | "hot" | "new";
 
 export async function getSkills(opts?: {
   query?: string;
@@ -11,13 +12,14 @@ export async function getSkills(opts?: {
   tag?: string;
   featured?: boolean;
   page?: number;
-  ownerId?: string;       // for personal library
-  includePrivate?: boolean; // show unpublished (owner only)
+  sort?: SortMode;
+  ownerId?: string;
+  includePrivate?: boolean;
 }): Promise<{ skills: Skill[]; total: number; pages: number }> {
   const page = Math.max(1, opts?.page ?? 1);
+  const sort = opts?.sort ?? "featured";
   const where: any = {};
 
-  // Public registry always filters to published=true unless owner is viewing
   if (opts?.ownerId && opts?.includePrivate) {
     where.ownerId = opts.ownerId;
   } else {
@@ -35,14 +37,16 @@ export async function getSkills(opts?: {
     ];
   }
 
+  const orderBy: any[] =
+    sort === "popular"  ? [{ installCount: "desc" }, { createdAt: "desc" }] :
+    sort === "trending" ? [{ weeklyInstalls: "desc" }, { installCount: "desc" }] :
+    sort === "hot"      ? [{ dailyInstalls: "desc" }, { weeklyInstalls: "desc" }] :
+    sort === "new"      ? [{ createdAt: "desc" }] :
+    /* featured */        [{ featured: "desc" }, { installCount: "desc" }, { createdAt: "desc" }];
+
   const [total, skills] = await Promise.all([
     prisma.skill.count({ where }),
-    prisma.skill.findMany({
-      where,
-      orderBy: [{ featured: "desc" }, { installCount: "desc" }, { createdAt: "desc" }],
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-    }),
+    prisma.skill.findMany({ where, orderBy, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE }),
   ]);
 
   return { skills, total, pages: Math.ceil(total / PAGE_SIZE) };

@@ -23,11 +23,24 @@ function buildVSCodeUri(server: McpServer): string | null {
   }
 }
 
-export function ServerCard({ server, featured }: { server: McpServer; featured?: boolean }) {
+const RISK_STYLES: Record<string, string> = {
+  safe:    "text-green-400 border-green-500/30 bg-green-500/10",
+  low:     "text-yellow-400 border-yellow-500/30 bg-yellow-500/10",
+  medium:  "text-orange-400 border-orange-500/30 bg-orange-500/10",
+  high:    "text-red-400 border-red-500/30 bg-red-500/10",
+  unknown: "text-gray-500 border-gray-700 bg-gray-800/50",
+};
+const RISK_LABELS: Record<string, string> = {
+  safe: "Safe", low: "Low risk", medium: "Medium risk", high: "High risk", unknown: "Unaudited",
+};
+
+export function ServerCard({ server, featured, rank }: { server: McpServer; featured?: boolean; rank?: number }) {
   const t = useT();
   const avatar = getGithubAvatar(server.repoUrl, server.authorUrl);
   const [copied, setCopied] = useState(false);
   const vscodeUri = buildVSCodeUri(server);
+  const riskStyle = RISK_STYLES[server.riskLevel] ?? RISK_STYLES.unknown;
+  const riskLabel = RISK_LABELS[server.riskLevel] ?? "Unaudited";
 
   function handleLocalInstall(e: React.MouseEvent) {
     e.preventDefault();
@@ -48,6 +61,9 @@ export function ServerCard({ server, featured }: { server: McpServer; featured?:
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2.5 min-w-0">
+            {rank !== undefined && (
+              <span className="text-xs text-gray-600 font-mono w-5 shrink-0 text-right">{rank}</span>
+            )}
             {avatar && (
               <img
                 src={avatar}
@@ -63,13 +79,16 @@ export function ServerCard({ server, featured }: { server: McpServer; featured?:
               <span title="Verified" className="text-blue-400 text-xs shrink-0">✓</span>
             )}
           </div>
-          <div className="flex items-center gap-2 shrink-0 ml-2">
+          <div className="flex items-center gap-1.5 shrink-0 ml-2">
             {server.avgRating && server.reviewCount && server.reviewCount >= 3 && server.avgRating >= 4.5 && (
               <span title={`★ ${server.avgRating} (${server.reviewCount} reviews)`} className="text-sm">⭐</span>
             )}
             {server.avgRating && server.reviewCount && (server.reviewCount < 3 || server.avgRating < 4.5) && (
               <span className="text-xs text-yellow-400">★ {server.avgRating}</span>
             )}
+            <span className={`text-xs px-1.5 py-0.5 rounded border ${riskStyle}`} title={`Security: ${riskLabel}`}>
+              {server.riskLevel === "safe" ? "✓" : server.riskLevel === "unknown" ? "?" : "!"}
+            </span>
           </div>
         </div>
 
@@ -94,8 +113,10 @@ export function ServerCard({ server, featured }: { server: McpServer; featured?:
         <div className="flex items-center justify-between text-xs text-gray-500">
           <span className="truncate">{server.authorName}</span>
           <div className="flex items-center gap-2 shrink-0 ml-2">
+            {server.downloadCount > 0 && (
+              <span>↓ {server.downloadCount.toLocaleString()}</span>
+            )}
             <span className="font-mono">{server.transport}</span>
-            {server.npmPackage && <span className="text-green-400/70">npm</span>}
           </div>
         </div>
       </a>
@@ -103,7 +124,6 @@ export function ServerCard({ server, featured }: { server: McpServer; featured?:
       {/* Install buttons */}
       {server.installCmd && (
         <div className="px-4 sm:px-5 pb-4 pt-0 flex gap-2">
-          {/* VS Code */}
           {vscodeUri ? (
             <a
               href={vscodeUri}
@@ -122,7 +142,6 @@ export function ServerCard({ server, featured }: { server: McpServer; featured?:
             </a>
           ) : null}
 
-          {/* Local / CLI */}
           <button
             onClick={handleLocalInstall}
             title="Copy CLI install command"

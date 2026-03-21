@@ -20,7 +20,15 @@ export const translations = {
     // Home hero
     heroTitle: "Your AI Development Hub",
     heroDesc: "Discover and install MCP servers, slash-command skills, and AI agents. Everything your Claude Code or Cursor needs — in one place.",
+    heroOr: "or",
     allCommands: "All commands →",
+
+    // Sort tabs
+    sortFeatured: "Featured",
+    sortPopular: "Popular",
+    sortTrending: "Trending",
+    sortHot: "Hot today",
+    sortNew: "New",
 
     // Home sections
     sectionMcps: "MCP Servers",
@@ -193,7 +201,15 @@ export const translations = {
     // Home hero
     heroTitle: "Tu Hub de Desarrollo IA",
     heroDesc: "Descubre e instala servidores MCP, skills y agentes de IA. Todo lo que Claude Code o Cursor necesitan — en un solo lugar.",
+    heroOr: "o",
     allCommands: "Todos los comandos →",
+
+    // Sort tabs
+    sortFeatured: "Destacados",
+    sortPopular: "Popular",
+    sortTrending: "Trending",
+    sortHot: "Hoy",
+    sortNew: "Nuevo",
 
     // Home sections
     sectionMcps: "Servidores MCP",

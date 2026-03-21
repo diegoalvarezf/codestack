@@ -10,7 +10,7 @@ export async function GET(_req: NextRequest, { params }: { params: { slug: strin
   // Increment install count
   await prisma.skill.update({
     where: { slug: params.slug },
-    data: { installCount: { increment: 1 } },
+    data: { installCount: { increment: 1 }, weeklyInstalls: { increment: 1 }, dailyInstalls: { increment: 1 } },
   }).catch(() => {});
 
   return NextResponse.json(skill);

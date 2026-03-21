@@ -30,11 +30,15 @@ model Server {
   configJson    String?  // JSON template para claude_desktop_config.json
   envVars       String?  // JSON: [{name, description, required, example}]
   category      String?  // "official" | "community" | "enterprise"
-  downloadCount Int      @default(0)
-  createdBy     String?  // githubLogin of submitter
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  reviews       Review[]
+  downloadCount   Int      @default(0)
+  weeklyInstalls  Int      @default(0)
+  dailyInstalls   Int      @default(0)
+  riskLevel       String   @default("unknown") // "safe" | "low" | "medium" | "high" | "unknown"
+  repoSlug        String?  // "owner/repo" e.g. "modelcontextprotocol/servers"
+  createdBy       String?  // githubLogin of submitter
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  reviews         Review[]
 }
 
 model Skill {
@@ -51,8 +55,10 @@ model Skill {
   verified     Boolean  @default(false)
   featured     Boolean  @default(false)
   published    Boolean  @default(false) // false = private library, true = public registry
-  installCount Int      @default(0)
-  ownerId      String?
+  installCount   Int      @default(0)
+  weeklyInstalls Int      @default(0)
+  dailyInstalls  Int      @default(0)
+  ownerId        String?
   owner        User?    @relation(fields: [ownerId], references: [id])
   createdBy    String?  // githubLogin
   createdAt    DateTime @default(now())

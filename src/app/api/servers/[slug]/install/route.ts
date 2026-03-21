@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 export async function POST(_req: NextRequest, { params }: { params: { slug: string } }) {
   await prisma.server.updateMany({
     where: { slug: params.slug },
-    data: { downloadCount: { increment: 1 } },
+    data: { downloadCount: { increment: 1 }, weeklyInstalls: { increment: 1 }, dailyInstalls: { increment: 1 } },
   });
   return NextResponse.json({ ok: true });
 }

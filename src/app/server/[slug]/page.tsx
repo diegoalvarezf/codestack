@@ -6,6 +6,7 @@ import { getT } from "@/lib/i18n";
 import { SubmittedBanner } from "./SubmittedBanner";
 import { ReviewSection } from "@/components/ReviewSection";
 import { CopyButton } from "@/components/CopyButton";
+import { ExpandableConfig } from "./ExpandableConfig";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,10 @@ export default async function ServerPage({ params }: { params: { slug: string } 
     continue: "Continue.dev",
     other: "Other",
   };
+
+  // Derive owner/repo from repoSlug or repoUrl
+  const repoIdentifier = server.repoSlug
+    ?? server.repoUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "").replace(/\/$/, "");
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -87,19 +92,20 @@ export default async function ServerPage({ params }: { params: { slug: string } 
             </section>
           )}
 
-          {/* Manual install command */}
+          {/* Manual install — expandable config per client */}
           {server.installCmd && (
             <section>
               <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">
                 {t.manualInstall}
               </h2>
-              <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 font-mono text-sm flex items-center justify-between gap-4">
+              <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 font-mono text-sm flex items-center justify-between gap-4 mb-3">
                 <div>
                   <span className="text-gray-500">$ </span>
                   <span className="text-blue-400">{server.installCmd}</span>
                 </div>
                 <CopyButton text={server.installCmd} />
               </div>
+              <ExpandableConfig server={{ slug: server.slug, configJson: server.configJson }} />
             </section>
           )}
 
@@ -169,6 +175,11 @@ export default async function ServerPage({ params }: { params: { slug: string } 
             >
               <span>⬡</span> {t.viewOnGitHub}
             </a>
+
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Repository</p>
+              <span className="font-mono text-xs text-gray-400">{repoIdentifier}</span>
+            </div>
 
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{t.transport}</p>

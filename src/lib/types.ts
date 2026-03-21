@@ -29,6 +29,10 @@ export interface McpServer {
   envVars: EnvVar[] | null;
   category: string | null;
   downloadCount: number;
+  weeklyInstalls: number;
+  dailyInstalls: number;
+  riskLevel: string;
+  repoSlug: string | null;
   createdAt: Date;
   avgRating?: number;
   reviewCount?: number;

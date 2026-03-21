@@ -50,8 +50,11 @@ program
 program
   .command("list")
   .description("List installed MCP servers across all clients")
-  .action(() => {
-    listCommand();
+  .action(async () => {
+    await listCommand().catch((err) => {
+      console.error(chalk.red("Error:"), err.message);
+      process.exit(1);
+    });
   });
 
 program

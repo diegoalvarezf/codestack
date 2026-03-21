@@ -32,6 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </a>
           <div className="flex items-center gap-3 sm:gap-6 text-sm text-gray-400">
             <a href="/stacks" className="hover:text-white transition-colors hidden sm:block">{t.stacks}</a>
+            <a href="/audits" className="hover:text-white transition-colors hidden md:block text-xs text-gray-500 hover:text-gray-300">🔒 Audits</a>
             <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">{t.cli}</a>
             <a
               href="https://modelcontextprotocol.io"
