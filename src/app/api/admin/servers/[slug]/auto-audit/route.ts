@@ -146,13 +146,16 @@ Respond ONLY with JSON (no markdown):
 
 // ── Main handler ──────────────────────────────────────────────────────────
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   const session = await auth();
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const body = await req.json().catch(() => ({}));
+  const forceClaude = body.force === true;
 
   const server = await prisma.server.findUnique({ where: { slug: params.slug } });
   if (!server) return NextResponse.json({ error: "Server not found" }, { status: 404 });
@@ -211,52 +214,76 @@ export async function POST(
   let reason = "";
   let usedClaude = false;
 
-  // ── Tier 1: trusted org → safe immediately ────────────────────────────
-  if (ownerRepo && TRUSTED_ORGS.has(ownerRepo.owner.toLowerCase())) {
-    riskLevel = "safe";
-    reason = `Published by trusted organization: ${ownerRepo.owner}`;
-  }
-
-  // ── Tier 2: repo missing or private → high immediately ───────────────
-  else if (!ownerRepo || !githubExists) {
-    riskLevel = "high";
-    reason = "Repository is private, missing, or not on GitHub";
-  }
-
-  // ── Tier 3: fetch code + static analysis ─────────────────────────────
-  else {
-    const code = await fetchRepoCode(ownerRepo.owner, ownerRepo.repo).catch(() => "");
+  if (forceClaude) {
+    // ── Force mode: skip tiers, always call Claude ─────────────────────
+    const code = ownerRepo
+      ? await fetchRepoCode(ownerRepo.owner, ownerRepo.repo).catch(() => "")
+      : "";
     const { verdict, reasons } = staticAnalysis(code);
+    const context = [
+      ownerRepo ? `github.com/${ownerRepo.owner}/${ownerRepo.repo}` : "Unknown repo",
+      githubExists ? "Public GitHub repo" : "Private/missing repo",
+      recentActivity ? "Active in last year" : "Inactive for over a year",
+      npmExists ? `On npm${npmRepoMatch ? "" : " (repo mismatch)"}` : "Not on npm",
+      githubStars !== null ? `${githubStars} stars` : "Unknown stars",
+      verdict === "high" ? `High-risk patterns: ${reasons.join(", ")}` :
+      verdict === "medium" ? `Suspicious patterns: ${reasons.join(", ")}` : "Clean static analysis",
+    ].join(". ");
+    try {
+      const result = await analyzeWithClaude(server.name, code, context);
+      riskLevel = result.riskLevel;
+      reason = result.reason;
+      usedClaude = true;
+    } catch {
+      riskLevel = "unknown";
+      reason = "Claude unavailable";
+    }
+  } else {
+    // ── Tier 1: trusted org → safe immediately ──────────────────────────
+    if (ownerRepo && TRUSTED_ORGS.has(ownerRepo.owner.toLowerCase())) {
+      riskLevel = "safe";
+      reason = `Published by trusted organization: ${ownerRepo.owner}`;
+    }
 
-    if (verdict === "high") {
+    // ── Tier 2: repo missing or private → high immediately ───────────────
+    else if (!ownerRepo || !githubExists) {
       riskLevel = "high";
-      reason = `Static analysis: ${reasons.join(", ")}`;
-    } else if (verdict === "medium" && !recentActivity) {
-      // Medium risk + inactive → skip Claude, call it medium
-      riskLevel = "medium";
-      reason = `Suspicious patterns and no recent activity: ${reasons.join(", ")}`;
-    } else if (verdict === "clean" && recentActivity && (githubStars ?? 0) >= 100) {
-      // Clean code + active + popular → low without Claude
-      riskLevel = "low";
-      reason = "Clean static analysis, active repo, community validated";
-    } else {
-      // ── Tier 4: ambiguous → use Claude ──────────────────────────────
-      const context = [
-        githubExists ? "Public GitHub repo" : "Private/missing repo",
-        recentActivity ? "Active in last year" : "Inactive for over a year",
-        npmExists ? `On npm${npmRepoMatch ? "" : " (repo mismatch)"}` : "Not on npm",
-        githubStars !== null ? `${githubStars} stars` : "Unknown stars",
-        verdict === "medium" ? `Suspicious patterns: ${reasons.join(", ")}` : "Clean static analysis",
-      ].join(". ");
+      reason = "Repository is private, missing, or not on GitHub";
+    }
 
-      try {
-        const result = await analyzeWithClaude(server.name, code, context);
-        riskLevel = result.riskLevel;
-        reason = result.reason;
-        usedClaude = true;
-      } catch {
-        riskLevel = verdict === "medium" ? "medium" : "low";
-        reason = "Claude unavailable, used static analysis";
+    // ── Tier 3: fetch code + static analysis ─────────────────────────────
+    else {
+      const code = await fetchRepoCode(ownerRepo.owner, ownerRepo.repo).catch(() => "");
+      const { verdict, reasons } = staticAnalysis(code);
+
+      if (verdict === "high") {
+        riskLevel = "high";
+        reason = `Static analysis: ${reasons.join(", ")}`;
+      } else if (verdict === "medium" && !recentActivity) {
+        riskLevel = "medium";
+        reason = `Suspicious patterns and no recent activity: ${reasons.join(", ")}`;
+      } else if (verdict === "clean" && recentActivity && (githubStars ?? 0) >= 100) {
+        riskLevel = "low";
+        reason = "Clean static analysis, active repo, community validated";
+      } else {
+        // ── Tier 4: ambiguous → use Claude ────────────────────────────
+        const context = [
+          githubExists ? "Public GitHub repo" : "Private/missing repo",
+          recentActivity ? "Active in last year" : "Inactive for over a year",
+          npmExists ? `On npm${npmRepoMatch ? "" : " (repo mismatch)"}` : "Not on npm",
+          githubStars !== null ? `${githubStars} stars` : "Unknown stars",
+          verdict === "medium" ? `Suspicious patterns: ${reasons.join(", ")}` : "Clean static analysis",
+        ].join(". ");
+
+        try {
+          const result = await analyzeWithClaude(server.name, code, context);
+          riskLevel = result.riskLevel;
+          reason = result.reason;
+          usedClaude = true;
+        } catch {
+          riskLevel = verdict === "medium" ? "medium" : "low";
+          reason = "Claude unavailable, used static analysis";
+        }
       }
     }
   }
