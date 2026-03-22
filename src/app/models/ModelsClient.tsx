@@ -174,7 +174,6 @@ function installCommand(model: Model, runner: Runner): string | null {
 }
 
 export function ModelsClient() {
-  const [ram, setRam] = useState(0);
   const [gpu, setGpu] = useState({ name: "", vram: 0 });
   const [detected, setDetected] = useState(false);
   const [filterProvider, setFilterProvider] = useState("All");
@@ -182,23 +181,23 @@ export function ModelsClient() {
   const [filterTC, setFilterTC] = useState<ToolCalling | "all">("all");
   const [hideIncompatible, setHideIncompatible] = useState(false);
   const [manualVram, setManualVram] = useState<number | null>(null);
+  const [manualRam, setManualRam] = useState<number | null>(null);
   const [runner, setRunner] = useState<Runner>("ollama");
 
   useEffect(() => {
-    const detectedRam = (navigator as any).deviceMemory || 8;
     const detectedGpu = detectGPU();
-    setRam(detectedRam);
     setGpu(detectedGpu);
     setDetected(true);
   }, []);
 
   const effectiveVram = manualVram !== null ? manualVram : gpu.vram;
+  const effectiveRam = manualRam ?? 8;
 
   const filtered = MODELS
     .filter(m => filterProvider === "All" || m.provider === filterProvider)
     .filter(m => !filterCap || m.capabilities.includes(filterCap))
     .filter(m => filterTC === "all" || m.toolCalling === filterTC)
-    .map(m => ({ ...m, grade: gradeModel(m, effectiveVram, ram) }))
+    .map(m => ({ ...m, grade: gradeModel(m, effectiveVram, effectiveRam) }))
     .filter(m => !hideIncompatible || m.grade !== "F")
     .sort((a, b) => {
       const order = { S: 0, A: 1, B: 2, C: 3, D: 4, F: 5 };
@@ -210,14 +209,11 @@ export function ModelsClient() {
       {/* Hardware panel */}
       <div className="bg-gray-900 border border-gray-800 rounded-lg p-5 mb-8">
         <div className="flex flex-wrap items-start gap-6">
+          {/* GPU */}
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Detected hardware</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Detected GPU</p>
             {detected ? (
               <div className="flex flex-wrap gap-6">
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">System RAM</p>
-                  <p className="text-lg font-bold text-white">{ram} GB</p>
-                </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">GPU</p>
                   <p className="text-sm font-medium text-white truncate max-w-xs">{gpu.name || "Not detected"}</p>
@@ -234,8 +230,9 @@ export function ModelsClient() {
               <p className="text-sm text-gray-500">Detecting...</p>
             )}
           </div>
+          {/* VRAM override */}
           <div>
-            <p className="text-xs text-gray-500 mb-2">Override VRAM (GB)</p>
+            <p className="text-xs text-gray-500 mb-2">VRAM (GB)</p>
             <div className="flex gap-1 flex-wrap">
               {[4, 6, 8, 10, 12, 16, 24, 32, 48, 80].map(v => (
                 <button
@@ -243,6 +240,25 @@ export function ModelsClient() {
                   onClick={() => setManualVram(manualVram === v ? null : v)}
                   className={`px-2.5 py-1 text-xs rounded border transition-colors ${
                     (manualVram === v) || (manualVram === null && gpu.vram === v)
+                      ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
+                      : "border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300"
+                  }`}
+                >
+                  {v}GB
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* RAM override */}
+          <div>
+            <p className="text-xs text-gray-500 mb-2">System RAM (GB)</p>
+            <div className="flex gap-1 flex-wrap">
+              {[4, 8, 16, 32, 64, 128].map(v => (
+                <button
+                  key={v}
+                  onClick={() => setManualRam(manualRam === v ? null : v)}
+                  className={`px-2.5 py-1 text-xs rounded border transition-colors ${
+                    manualRam === v
                       ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
                       : "border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300"
                   }`}
@@ -309,7 +325,7 @@ export function ModelsClient() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex gap-1 flex-wrap">
             <span className="text-xs text-gray-600 self-center mr-1">Tool calling:</span>
-            {([["all", "All"], ["full", "MCP Ready"], ["partial", "Partial"], ["none", "None"]] as const).map(([val, label]) => (
+            {([["all", "All"], ["full", "Tool use"], ["partial", "Partial"], ["none", "None"]] as const).map(([val, label]) => (
               <button
                 key={val}
                 onClick={() => setFilterTC(val)}
@@ -384,7 +400,7 @@ export function ModelsClient() {
                     <p className="font-semibold text-white text-sm">{model.name}</p>
                     {model.toolCalling === "full" && (
                       <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20 font-medium shrink-0">
-                        MCP Ready
+                        Tool use
                       </span>
                     )}
                   </div>
