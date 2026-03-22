@@ -74,6 +74,7 @@ export const translations = {
     // Stacks list
     stacksTitle: "Stacks",
     stacksDesc: "Give your team a shared AI setup in minutes — the same servers, skills, and agents, one install command. No more \"what tools are you using?\"",
+    myStacks: "My stacks",
     curatedStacks: "Curated",
     communityStacks: "Community",
     createStack: "+ Create stack",
@@ -255,6 +256,7 @@ export const translations = {
     // Stacks list
     stacksTitle: "Stacks",
     stacksDesc: "Dale a tu equipo el mismo entorno de IA en minutos — los mismos servidores, skills y agentes, con un solo comando. Sin el \"¿qué herramientas usas tú?\"",
+    myStacks: "Mis stacks",
     curatedStacks: "Curados",
     communityStacks: "Comunidad",
     createStack: "+ Crear stack",

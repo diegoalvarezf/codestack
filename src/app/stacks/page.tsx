@@ -26,10 +26,19 @@ export default async function StacksPage() {
   const lang = (await cookies()).get("lang")?.value ?? "en";
   const t = getT(lang);
 
-  const [session, userStacks] = await Promise.all([
-    auth(),
+  const session = await auth();
+  const githubLogin = session?.user?.githubLogin;
+
+  const [myStacks, communityStacks] = await Promise.all([
+    githubLogin
+      ? prisma.userStack.findMany({
+          where: { createdBy: githubLogin },
+          include: { items: true },
+          orderBy: { createdAt: "desc" },
+        })
+      : Promise.resolve([]),
     prisma.userStack.findMany({
-      where: { public: true },
+      where: { public: true, ...(githubLogin ? { createdBy: { not: githubLogin } } : {}) },
       include: { items: true },
       orderBy: { createdAt: "desc" },
     }),
@@ -56,6 +65,46 @@ export default async function StacksPage() {
           </a>
         )}
       </div>
+
+      {/* My stacks */}
+      {myStacks.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-5">{t.myStacks}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            {myStacks.map((stack) => {
+              const servers = stack.items.filter(i => i.type === "server").length;
+              const skills = stack.items.filter(i => i.type === "skill").length;
+              const agents = stack.items.filter(i => i.type === "agent").length;
+              return (
+                <a key={stack.slug} href={`/stacks/${stack.slug}`}
+                  className="group block rounded-xl border border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all hover:-translate-y-0.5 p-5">
+                  <div className="flex items-start gap-3 mb-3">
+                    <span className="flex items-center justify-center w-9 h-9 rounded-lg border bg-gray-800 border-gray-700 text-gray-300 font-semibold text-sm shrink-0">
+                      {stack.icon}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h2 className="font-semibold text-white group-hover:text-blue-400 transition-colors truncate">{stack.name}</h2>
+                        {!stack.public && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded border border-gray-700 text-gray-600 shrink-0">Private</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {servers > 0 && <span className="text-xs text-gray-500">{servers} {t.servers}</span>}
+                        {skills > 0 && <span className="text-xs text-gray-500">{skills} {t.skills_label}</span>}
+                        {agents > 0 && <span className="text-xs text-gray-500">{agents} {t.agents_label}</span>}
+                      </div>
+                    </div>
+                  </div>
+                  {stack.description && (
+                    <p className="text-sm text-gray-400 leading-relaxed">{stack.description}</p>
+                  )}
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Curated stacks */}
       <section className="mb-12">
@@ -90,11 +139,11 @@ export default async function StacksPage() {
       </section>
 
       {/* Community stacks */}
-      {userStacks.length > 0 && (
+      {communityStacks.length > 0 && (
         <section className="mb-12">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-5">{t.communityStacks}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-            {userStacks.map((stack) => {
+            {communityStacks.map((stack) => {
               const servers = stack.items.filter(i => i.type === "server").length;
               const skills = stack.items.filter(i => i.type === "skill").length;
               const agents = stack.items.filter(i => i.type === "agent").length;
