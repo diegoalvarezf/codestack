@@ -14,8 +14,8 @@ export function CliCommand() {
       setTimeout(() => {
         setIndex(i => (i + 1) % EXAMPLES.length);
         setAnimating(false);
-      }, 300);
-    }, 2000);
+      }, 400);
+    }, 2800);
     return () => clearInterval(interval);
   }, []);
 
@@ -25,7 +25,7 @@ export function CliCommand() {
       npx @sallyheller/mcphub install{" "}
       <span className="inline-block overflow-hidden align-bottom" style={{ height: "1.25em" }}>
         <span
-          className="inline-block text-blue-400 transition-transform transition-opacity duration-300"
+          className="inline-block text-blue-400 transition-transform transition-opacity duration-400"
           style={{
             transform: animating ? "translateY(-100%)" : "translateY(0%)",
             opacity: animating ? 0 : 1,
