@@ -34,6 +34,8 @@ model Server {
   weeklyInstalls  Int      @default(0)
   dailyInstalls   Int      @default(0)
   riskLevel       String   @default("unknown") // "safe" | "low" | "medium" | "high" | "unknown"
+  auditNotes      String?  // reason from last auto-audit
+  auditedAt       DateTime? // when last audited
   repoSlug        String?  // "owner/repo" e.g. "modelcontextprotocol/servers"
   createdBy       String?  // githubLogin of submitter
   createdAt       DateTime @default(now())

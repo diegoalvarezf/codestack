@@ -263,7 +263,7 @@ export async function POST(
 
   await prisma.server.update({
     where: { slug: params.slug },
-    data: { riskLevel, stars: githubStars ?? server.stars },
+    data: { riskLevel, auditNotes: reason, auditedAt: new Date(), stars: githubStars ?? server.stars },
   });
 
   return NextResponse.json({

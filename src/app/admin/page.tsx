@@ -43,7 +43,7 @@ export default async function AdminPage({
     }),
     prisma.server.findMany({
       orderBy: [{ riskLevel: "asc" }, { downloadCount: "desc" }],
-      select: { id: true, name: true, slug: true, riskLevel: true, repoUrl: true, downloadCount: true },
+      select: { id: true, name: true, slug: true, riskLevel: true, auditNotes: true, auditedAt: true, repoUrl: true, downloadCount: true },
     }),
   ]);
 
@@ -138,6 +138,11 @@ export default async function AdminPage({
                   <p className="text-xs text-gray-600 font-mono truncate">
                     {s.repoUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "")}
                   </p>
+                  {s.auditNotes && (
+                    <p className="text-xs text-gray-500 mt-0.5 truncate max-w-sm" title={s.auditNotes}>
+                      {s.auditedAt ? `${new Date(s.auditedAt).toLocaleDateString()} — ` : ""}{s.auditNotes}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <AutoAuditButton slug={s.slug} />
