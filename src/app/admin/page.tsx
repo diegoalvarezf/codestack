@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { Lock } from "lucide-react";
 import { AutoAuditButton } from "./AutoAuditButton";
+import { AuditNote } from "./AuditNote";
 
 export const dynamic = "force-dynamic";
 
@@ -141,9 +142,10 @@ export default async function AdminPage({
                     {s.repoUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "")}
                   </p>
                   {s.auditNotes && (
-                    <p className="text-xs text-gray-500 mt-0.5 truncate max-w-sm" title={s.auditNotes}>
-                      {s.auditedAt ? `${new Date(s.auditedAt).toLocaleDateString()} — ` : ""}{s.auditNotes}
-                    </p>
+                    <AuditNote
+                      date={s.auditedAt ? new Date(s.auditedAt).toLocaleDateString() : null}
+                      notes={s.auditNotes}
+                    />
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
