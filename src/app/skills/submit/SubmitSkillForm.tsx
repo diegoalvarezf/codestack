@@ -10,6 +10,7 @@ export function SubmitSkillForm({ defaultType = "prompt" }: { defaultType?: "pro
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
+  const [repoUrl, setRepoUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,7 +28,7 @@ export function SubmitSkillForm({ defaultType = "prompt" }: { defaultType?: "pro
     const res = await fetch("/api/skills", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ slug, name, description, type, content, tags: tagsArray }),
+      body: JSON.stringify({ slug, name, description, type, content, tags: tagsArray, repoUrl: repoUrl || undefined }),
     });
 
     setLoading(false);
@@ -132,6 +133,20 @@ export function SubmitSkillForm({ defaultType = "prompt" }: { defaultType?: "pro
             ? "This is the full prompt that will run when users invoke the slash command."
             : "This is the system prompt that defines the agent's behavior and expertise."}
         </p>
+      </div>
+
+      {/* Repo URL */}
+      <div>
+        <label className="text-sm font-medium text-gray-300 mb-1 block">
+          GitHub repo <span className="text-gray-500 font-normal">(optional)</span>
+        </label>
+        <input
+          value={repoUrl}
+          onChange={(e) => setRepoUrl(e.target.value)}
+          placeholder="https://github.com/you/your-repo"
+          type="url"
+          className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 transition-colors"
+        />
       </div>
 
       {/* Tags */}
