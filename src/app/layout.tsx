@@ -36,6 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <a href="/stacks" className="hover:text-white transition-colors hidden sm:block">{t.stacks}</a>
             <a href="/run-local" className="hover:text-white transition-colors hidden sm:block">Run Local</a>
             <a href="/audits" className="hover:text-white transition-colors hidden md:block text-sm">Audits</a>
+            <a href="/docs" className="hover:text-white transition-colors hidden md:block text-sm">API</a>
             <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">{t.cli}</a>
             <a
               href="https://modelcontextprotocol.io"
@@ -50,6 +51,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               { label: t.stacks, href: "/stacks" },
               { label: "Run Local", href: "/run-local" },
               { label: "Audits", href: "/audits" },
+              { label: "API", href: "/docs" },
               { label: t.cli, href: "/install-cli" },
               { label: t.docs, href: "https://modelcontextprotocol.io", external: true },
             ]} />
