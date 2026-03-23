@@ -182,7 +182,10 @@ export default async function AdminPage({
               <div key={s.id} className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-lg px-4 py-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <a href={`/skills/${s.slug}`} className="text-sm text-white hover:text-purple-400 transition-colors">{s.name}</a>
+                    <a
+                      href={`/${s.type === "agent" ? "agents" : "skills"}/${s.slug}`}
+                      className={`text-sm text-white transition-colors ${s.type === "agent" ? "hover:text-orange-400" : "hover:text-purple-400"}`}
+                    >{s.name}</a>
                     <span className={`text-xs px-1.5 py-0.5 rounded border ${
                       s.type === "agent"
                         ? "border-orange-500/30 text-orange-400"

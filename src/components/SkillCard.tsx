@@ -33,7 +33,7 @@ export function SkillCard({ skill, featured }: { skill: Skill; featured?: boolea
         ? "border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10"
         : "border-gray-800 bg-gray-900 hover:bg-gray-800"
     }`}>
-      <a href={`/skills/${skill.slug}`} className="block p-4 sm:p-5 flex-1">
+      <a href={`/${skill.type === "agent" ? "agents" : "skills"}/${skill.slug}`} className="block p-4 sm:p-5 flex-1">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2.5 min-w-0">
