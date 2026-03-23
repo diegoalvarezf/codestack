@@ -55,8 +55,13 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ servers: results, total: results.length });
 }
 
-// POST /api/servers — submit a new server (5 submissions per hour per IP)
+// POST /api/servers — submit a new server (auth required, 5 submissions per hour per IP)
 export async function POST(req: NextRequest) {
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const ip = getIp(req);
   const rl = rateLimit(ip, "POST /api/servers", 5, 60 * 60 * 1000);
   if (!rl.allowed) {
@@ -72,7 +77,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const session = await auth();
   const body = await req.json().catch(() => null);
   if (!body) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
@@ -116,7 +120,7 @@ export async function POST(req: NextRequest) {
       installCmd: data.installCmd ?? null,
       envVars: data.envVars ? JSON.stringify(data.envVars) : null,
       category: data.category ?? null,
-      createdBy: session?.user?.githubLogin ?? null,
+      createdBy: session.user?.githubLogin ?? null,
     },
   });
 
