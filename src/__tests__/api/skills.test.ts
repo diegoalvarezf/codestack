@@ -84,7 +84,7 @@ describe("POST /api/skills", () => {
   });
 
   it("returns 401 when not authenticated", async () => {
-    vi.mocked(auth).mockResolvedValue(null);
+    vi.mocked(auth).mockResolvedValue(null as any);
     const req = makeRequest("/api/skills", {
       method: "POST",
       body: JSON.stringify(validSkillPayload),

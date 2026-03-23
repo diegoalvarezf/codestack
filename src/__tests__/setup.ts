@@ -43,7 +43,7 @@ vi.mock("@/lib/db", () => {
 // ── Mock NextAuth ─────────────────────────────────────────────────────────────
 
 vi.mock("@/lib/auth", () => ({
-  auth: vi.fn().mockResolvedValue(null), // unauthenticated by default
+  auth: vi.fn().mockResolvedValue(null as any), // unauthenticated by default
 }));
 
 // ── Mock rate-limit (always allow in tests) ───────────────────────────────────
