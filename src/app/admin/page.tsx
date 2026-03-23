@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { Lock } from "lucide-react";
 import { AutoAuditButton } from "./AutoAuditButton";
 
 export const dynamic = "force-dynamic";
@@ -69,19 +70,20 @@ export default async function AdminPage({
       {/* Tabs */}
       <div className="flex gap-1 border-b border-gray-800 mb-6">
         {[
-          { id: "servers", label: "Servers" },
-          { id: "skills", label: "Skills & Agents" },
-          { id: "audits", label: "🔒 Audits" },
-        ].map(({ id, label }) => (
+          { id: "servers", label: "Servers", icon: null },
+          { id: "skills", label: "Skills & Agents", icon: null },
+          { id: "audits", label: "Audits", icon: <Lock className="w-3.5 h-3.5" /> },
+        ].map(({ id, label, icon }) => (
           <a
             key={id}
             href={`/admin?tab=${id}`}
-            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
               tab === id
                 ? "border-blue-500 text-white"
                 : "border-transparent text-gray-500 hover:text-gray-300"
             }`}
           >
+            {icon}
             {label}
           </a>
         ))}

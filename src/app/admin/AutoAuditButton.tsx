@@ -15,7 +15,7 @@ function Spinner() {
 
 export function AutoAuditButton({ slug }: { slug: string }) {
   const [loading, setLoading] = useState<Mode | null>(null);
-  const [result, setResult] = useState<{ level: string; usedClaude: boolean } | null>(null);
+  const [result, setResult] = useState<{ level: string; reason: string; usedClaude: boolean } | null>(null);
 
   async function run(mode: Mode) {
     setLoading(mode);
@@ -28,13 +28,13 @@ export function AutoAuditButton({ slug }: { slug: string }) {
       });
       const data = await res.json();
       if (data.ok) {
-        setResult({ level: data.riskLevel, usedClaude: data.usedClaude });
-        setTimeout(() => window.location.reload(), 2000);
+        setResult({ level: data.riskLevel, reason: data.reason ?? "", usedClaude: data.usedClaude });
+        setTimeout(() => window.location.reload(), 800);
       } else {
-        setResult({ level: "error", usedClaude: false });
+        setResult({ level: "error", reason: data.error ?? "Unknown error", usedClaude: false });
       }
     } catch {
-      setResult({ level: "error", usedClaude: false });
+      setResult({ level: "error", reason: "Request failed", usedClaude: false });
     } finally {
       setLoading(null);
     }
@@ -42,8 +42,16 @@ export function AutoAuditButton({ slug }: { slug: string }) {
 
   if (result) {
     return (
-      <span className={`text-xs px-2 py-1 rounded border ${result.level === "error" ? "border-red-500/40 text-red-400" : "border-gray-600 text-gray-300"}`}>
+      <span
+        title={result.reason}
+        className={`text-xs px-2 py-1 rounded border cursor-default ${result.level === "error" ? "border-red-500/40 text-red-400" : "border-gray-600 text-gray-300"}`}
+      >
         {result.level}{result.usedClaude ? " (claude)" : ""}
+        {result.reason && (
+          <span className="ml-1 text-gray-500 truncate max-w-[120px] inline-block align-bottom" style={{ fontSize: "0.65rem" }}>
+            — {result.reason}
+          </span>
+        )}
       </span>
     );
   }
