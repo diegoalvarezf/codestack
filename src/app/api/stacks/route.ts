@@ -6,8 +6,21 @@ function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/, "");
 }
 
-// GET — list public user stacks
-export async function GET() {
+// GET — list stacks. ?mine=true returns the authenticated user's own stacks
+export async function GET(req: NextRequest) {
+  const mine = new URL(req.url).searchParams.get("mine") === "true";
+
+  if (mine) {
+    const session = await auth();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const stacks = await prisma.userStack.findMany({
+      where: { createdBy: session.user.githubLogin! },
+      select: { slug: true, name: true, icon: true, items: { select: { type: true, itemSlug: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json(stacks);
+  }
+
   const stacks = await prisma.userStack.findMany({
     where: { public: true },
     include: { items: { orderBy: { order: "asc" } } },

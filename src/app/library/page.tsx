@@ -7,6 +7,7 @@ import { ServerCard } from "@/components/ServerCard";
 import { SkillCard } from "@/components/SkillCard";
 import { AgentCard } from "@/components/AgentCard";
 import { LibraryActions } from "./LibraryActions";
+import { AddToStack } from "./AddToStack";
 
 export const dynamic = "force-dynamic";
 
@@ -28,13 +29,18 @@ export default async function LibraryPage() {
   const login = session.user.githubLogin;
   if (!login) redirect("/auth/signin");
 
-  const [rawServers, skills] = await Promise.all([
+  const [rawServers, skills, myStacks] = await Promise.all([
     prisma.server.findMany({
       where: { createdBy: login },
       orderBy: { createdAt: "desc" },
     }),
     prisma.skill.findMany({
       where: { createdBy: login },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.userStack.findMany({
+      where: { createdBy: login },
+      select: { slug: true, name: true, icon: true, items: { select: { itemSlug: true } } },
       orderBy: { createdAt: "desc" },
     }),
   ]);
@@ -110,7 +116,12 @@ export default async function LibraryPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {servers.map(s => (
-              <ServerCard key={s.id} server={s} />
+              <div key={s.id} className="relative group">
+                <ServerCard server={s} />
+                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <AddToStack itemSlug={s.slug} type="server" stacks={myStacks} />
+                </div>
+              </div>
             ))}
           </div>
         </section>
@@ -130,6 +141,9 @@ export default async function LibraryPage() {
               <div key={s.id} className="relative group">
                 <SkillCard skill={s as any} />
                 <LibraryActions slug={s.slug} type="skill" published={s.published} />
+                <div className="absolute top-3 right-12 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <AddToStack itemSlug={s.slug} type="skill" stacks={myStacks} />
+                </div>
               </div>
             ))}
           </div>
@@ -150,6 +164,9 @@ export default async function LibraryPage() {
               <div key={s.id} className="relative group">
                 <AgentCard skill={s as any} />
                 <LibraryActions slug={s.slug} type="agent" published={s.published} />
+                <div className="absolute top-3 right-12 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <AddToStack itemSlug={s.slug} type="agent" stacks={myStacks} />
+                </div>
               </div>
             ))}
           </div>
