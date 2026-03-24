@@ -13,41 +13,27 @@ function extractOwnerRepo(repoUrl: string): { owner: string; repo: string } | nu
   return { owner: match[1], repo: match[2] };
 }
 
-// Fetch stars for a single repo — returns null on failure
-async function fetchStars(owner: string, repo: string): Promise<number | null> {
-  const res = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}`,
-    { headers: getGitHubHeaders() }
-  );
-  if (!res.ok) return null;
-  const data = await res.json();
-  return typeof data.stargazers_count === "number" ? data.stargazers_count : null;
-}
+type FetchResult =
+  | { ok: true; stars: number }
+  | { ok: false; reason: "not-github" | "rate-limited" | "not-found" | "error"; status?: number };
 
-async function syncBatch<T extends { id: string; repoUrl: string | null; stars: number }>(
-  items: T[],
-  updateFn: (id: string, stars: number) => Promise<void>,
-): Promise<{ updated: number; failed: number }> {
-  let updated = 0;
-  let failed = 0;
-  const BATCH = 10;
-
-  for (let i = 0; i < items.length; i += BATCH) {
-    await Promise.all(
-      items.slice(i, i + BATCH).map(async (item) => {
-        if (!item.repoUrl) { failed++; return; }
-        const ownerRepo = extractOwnerRepo(item.repoUrl);
-        if (!ownerRepo) { failed++; return; }
-        const stars = await fetchStars(ownerRepo.owner, ownerRepo.repo);
-        if (stars === null) { failed++; return; }
-        if (stars !== item.stars) await updateFn(item.id, stars);
-        updated++;
-      })
+async function fetchStars(repoUrl: string): Promise<FetchResult> {
+  const ownerRepo = extractOwnerRepo(repoUrl);
+  if (!ownerRepo) return { ok: false, reason: "not-github" };
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${ownerRepo.owner}/${ownerRepo.repo}`,
+      { headers: getGitHubHeaders() }
     );
-    if (i + BATCH < items.length) await new Promise((r) => setTimeout(r, 500));
+    if (res.status === 403 || res.status === 429) return { ok: false, reason: "rate-limited", status: res.status };
+    if (res.status === 404) return { ok: false, reason: "not-found", status: 404 };
+    if (!res.ok) return { ok: false, reason: "error", status: res.status };
+    const data = await res.json();
+    const stars = typeof data.stargazers_count === "number" ? data.stargazers_count : 0;
+    return { ok: true, stars };
+  } catch {
+    return { ok: false, reason: "error" };
   }
-
-  return { updated, failed };
 }
 
 export async function GET(req: NextRequest) {
@@ -55,22 +41,67 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const hasToken = !!process.env.GITHUB_TOKEN;
+
   const [servers, skills] = await Promise.all([
-    prisma.server.findMany({ select: { id: true, repoUrl: true, stars: true } }),
-    prisma.skill.findMany({ where: { repoUrl: { not: null } }, select: { id: true, repoUrl: true, stars: true } }),
+    prisma.server.findMany({ select: { id: true, repoUrl: true, stars: true, slug: true } }),
+    prisma.skill.findMany({ where: { repoUrl: { not: null } }, select: { id: true, repoUrl: true, stars: true, slug: true } }),
   ]);
 
-  const [serverResult, skillResult] = await Promise.all([
-    syncBatch(servers, (id, stars) =>
-      prisma.server.update({ where: { id }, data: { stars } }).then(() => {})),
-    syncBatch(
-      skills.map(s => ({ ...s, repoUrl: s.repoUrl ?? "" })),
-      (id, stars) => prisma.skill.update({ where: { id }, data: { stars } }).then(() => {})),
-  ]);
+  const failures: { slug: string; repoUrl: string; reason: string }[] = [];
+  let serverUpdated = 0;
+  let skillUpdated = 0;
+  let rateLimited = false;
+
+  const BATCH = 10;
+
+  // Sync servers
+  for (let i = 0; i < servers.length; i += BATCH) {
+    if (rateLimited) break;
+    await Promise.all(
+      servers.slice(i, i + BATCH).map(async (server) => {
+        const result = await fetchStars(server.repoUrl);
+        if (!result.ok) {
+          if (result.reason === "rate-limited") rateLimited = true;
+          else failures.push({ slug: server.slug, repoUrl: server.repoUrl, reason: result.reason });
+          return;
+        }
+        if (result.stars !== server.stars) {
+          await prisma.server.update({ where: { id: server.id }, data: { stars: result.stars } });
+        }
+        serverUpdated++;
+      })
+    );
+    if (i + BATCH < servers.length) await new Promise((r) => setTimeout(r, 500));
+  }
+
+  // Sync skills
+  for (let i = 0; i < skills.length; i += BATCH) {
+    if (rateLimited) break;
+    await Promise.all(
+      skills.slice(i, i + BATCH).map(async (skill) => {
+        const result = await fetchStars(skill.repoUrl!);
+        if (!result.ok) {
+          if (result.reason === "rate-limited") rateLimited = true;
+          else failures.push({ slug: skill.slug, repoUrl: skill.repoUrl!, reason: result.reason });
+          return;
+        }
+        if (result.stars !== skill.stars) {
+          await prisma.skill.update({ where: { id: skill.id }, data: { stars: result.stars } });
+        }
+        skillUpdated++;
+      })
+    );
+    if (i + BATCH < skills.length) await new Promise((r) => setTimeout(r, 500));
+  }
 
   return NextResponse.json({
-    ok: true,
-    servers: { total: servers.length, ...serverResult },
-    skills: { total: skills.length, ...skillResult },
+    ok: !rateLimited,
+    hasGithubToken: hasToken,
+    rateLimited,
+    servers: { total: servers.length, updated: serverUpdated },
+    skills: { total: skills.length, updated: skillUpdated },
+    failures,
+    warning: rateLimited ? "Hit GitHub rate limit. Set GITHUB_TOKEN in Vercel env vars (5000 req/h vs 60 req/h without it)." : null,
   });
 }
