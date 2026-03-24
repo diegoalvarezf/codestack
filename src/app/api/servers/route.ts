@@ -5,6 +5,34 @@ import { auth } from "@/lib/auth";
 import { rateLimit, getIp } from "@/lib/rate-limit";
 import { sanitizeStrings } from "@/lib/sanitize";
 
+function extractOwnerRepo(url: string) {
+  const m = url.match(/github\.com\/([^/]+)\/([^/]+?)(?:\.git)?(?:\/.*)?$/);
+  return m ? { owner: m[1], repo: m[2] } : null;
+}
+
+async function fetchGitHubStars(repoUrl: string): Promise<number> {
+  const ownerRepo = extractOwnerRepo(repoUrl);
+  if (!ownerRepo) return 0;
+  try {
+    const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
+    if (process.env.GITHUB_TOKEN) headers.Authorization = `token ${process.env.GITHUB_TOKEN}`;
+    const res = await fetch(`https://api.github.com/repos/${ownerRepo.owner}/${ownerRepo.repo}`, { headers });
+    if (!res.ok) return 0;
+    const data = await res.json();
+    return typeof data.stargazers_count === "number" ? data.stargazers_count : 0;
+  } catch { return 0; }
+}
+
+async function fetchNpmDownloads(npmPackage: string | null | undefined): Promise<number> {
+  if (!npmPackage) return 0;
+  try {
+    const res = await fetch(`https://api.npmjs.org/downloads/point/last-week/${encodeURIComponent(npmPackage)}`);
+    if (!res.ok) return 0;
+    const data = await res.json();
+    return typeof data.downloads === "number" ? data.downloads : 0;
+  } catch { return 0; }
+}
+
 function slugify(name: string): string {
   return name
     .toLowerCase()
@@ -101,6 +129,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const [stars, npmDownloads] = await Promise.all([
+    fetchGitHubStars(data.repoUrl),
+    fetchNpmDownloads(data.npmPackage),
+  ]);
+
   const server = await prisma.server.create({
     data: {
       slug,
@@ -121,6 +154,8 @@ export async function POST(req: NextRequest) {
       envVars: data.envVars ? JSON.stringify(data.envVars) : null,
       category: data.category ?? null,
       createdBy: session.user?.githubLogin ?? null,
+      stars,
+      npmDownloads,
     },
   });
 
