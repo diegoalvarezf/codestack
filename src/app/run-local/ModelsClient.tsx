@@ -73,52 +73,16 @@ const MODELS: Model[] = [
   { id: "llama3.2-vision-11b", name: "Llama 3.2 Vision 11B", provider: "Meta", params: "11B", vramRequired: 7, ramRequired: 12, capabilities: ["vision", "agents"], toolCalling: "full", contextWindow: 128, license: "commercial", description: "Meta's multimodal model with tool calling.", ollamaId: "llama3.2-vision:11b", lmStudioId: "lmstudio-community/Llama-3.2-11B-Vision-Instruct-GGUF" },
 ];
 
-const GPU_VRAM_MAP: [RegExp, number][] = [
-  [/RTX\s*4090/i, 24], [/RTX\s*4080\s*SUPER/i, 16], [/RTX\s*4080/i, 16],
-  [/RTX\s*4070\s*Ti\s*SUPER/i, 16], [/RTX\s*4070\s*Ti/i, 12], [/RTX\s*4070\s*SUPER/i, 12], [/RTX\s*4070/i, 12],
-  [/RTX\s*4060\s*Ti.*16/i, 16], [/RTX\s*4060\s*Ti/i, 8], [/RTX\s*4060/i, 8],
-  [/RTX\s*4050/i, 6],
-  [/RTX\s*3090\s*Ti/i, 24], [/RTX\s*3090/i, 24],
-  [/RTX\s*3080\s*Ti/i, 12], [/RTX\s*3080.*12/i, 12], [/RTX\s*3080/i, 10],
-  [/RTX\s*3070\s*Ti/i, 8], [/RTX\s*3070/i, 8],
-  [/RTX\s*3060\s*Ti/i, 8], [/RTX\s*3060.*12/i, 12], [/RTX\s*3060/i, 12],
-  [/RTX\s*3050/i, 8],
-  [/RTX\s*2080\s*Ti/i, 11], [/RTX\s*2080\s*SUPER/i, 8], [/RTX\s*2080/i, 8],
-  [/RTX\s*2070\s*SUPER/i, 8], [/RTX\s*2070/i, 8],
-  [/GTX\s*1080\s*Ti/i, 11], [/GTX\s*1080/i, 8],
-  [/GTX\s*1070\s*Ti/i, 8], [/GTX\s*1070/i, 8],
-  [/GTX\s*1060.*6/i, 6], [/GTX\s*1060/i, 6],
-  [/RX\s*7900\s*XTX/i, 24], [/RX\s*7900\s*XT/i, 20], [/RX\s*7900/i, 16],
-  [/RX\s*7800\s*XT/i, 16], [/RX\s*7700\s*XT/i, 12],
-  [/RX\s*6900\s*XT/i, 16], [/RX\s*6800\s*XT/i, 16], [/RX\s*6800/i, 16],
-  [/RX\s*6700\s*XT/i, 12], [/RX\s*6600\s*XT/i, 8], [/RX\s*6600/i, 8],
-  [/Apple.*M3\s*Max/i, 36], [/Apple.*M3\s*Pro/i, 18], [/Apple.*M3/i, 8],
-  [/Apple.*M2\s*Max/i, 32], [/Apple.*M2\s*Pro/i, 16], [/Apple.*M2\s*Ultra/i, 64], [/Apple.*M2/i, 8],
-  [/Apple.*M1\s*Max/i, 24], [/Apple.*M1\s*Pro/i, 16], [/Apple.*M1\s*Ultra/i, 48], [/Apple.*M1/i, 8],
-  [/A100/i, 80], [/A6000/i, 48], [/A5000/i, 24], [/A4000/i, 16],
-  [/H100/i, 80], [/H200/i, 141],
-];
-
-function estimateVRAM(gpuName: string): number {
-  for (const [pattern, vram] of GPU_VRAM_MAP) {
-    if (pattern.test(gpuName)) return vram;
-  }
-  return 0;
-}
-
-function detectGPU(): { name: string; vram: number } {
+function detectGPUName(): string {
   try {
     const canvas = document.createElement("canvas");
     const gl = (canvas.getContext("webgl") || canvas.getContext("experimental-webgl")) as WebGLRenderingContext | null;
     if (gl) {
       const ext = gl.getExtension("WEBGL_debug_renderer_info");
-      if (ext) {
-        const name = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) as string;
-        return { name, vram: estimateVRAM(name) };
-      }
+      if (ext) return gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) as string;
     }
   } catch {}
-  return { name: "Unknown GPU", vram: 0 };
+  return "";
 }
 
 function gradeModel(model: Model, vram: number, ram: number): "S" | "A" | "B" | "C" | "D" | "F" {
@@ -180,8 +144,7 @@ function installCommand(model: Model, runner: Runner): string | null {
 }
 
 export function ModelsClient() {
-  const [gpu, setGpu] = useState({ name: "", vram: 0 });
-  const [detected, setDetected] = useState(false);
+  const [gpuName, setGpuName] = useState("");
   const [filterProvider, setFilterProvider] = useState("All");
   const [filterCap, setFilterCap] = useState<string | null>(null);
   const [filterTC, setFilterTC] = useState<ToolCalling | "all">("all");
@@ -191,12 +154,10 @@ export function ModelsClient() {
   const [runner, setRunner] = useState<Runner>("ollama");
 
   useEffect(() => {
-    const detectedGpu = detectGPU();
-    setGpu(detectedGpu);
-    setDetected(true);
+    setGpuName(detectGPUName());
   }, []);
 
-  const effectiveVram = manualVram !== null ? manualVram : gpu.vram;
+  const effectiveVram = manualVram ?? 0;
   const effectiveRam = manualRam ?? 8;
 
   const filtered = MODELS
@@ -226,66 +187,60 @@ export function ModelsClient() {
       </div>
 
       {/* Hardware panel */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-8">
-        <div className="flex flex-wrap items-start gap-6">
-          {/* GPU */}
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Detected GPU</p>
-            {detected ? (
-              <div className="flex flex-wrap gap-6">
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">GPU</p>
-                  <p className="text-sm font-medium text-white truncate max-w-xs">{gpu.name || "Not detected"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">VRAM (estimated)</p>
-                  {gpu.vram > 0
-                    ? <p className="text-lg font-bold text-white">{gpu.vram} GB</p>
-                    : <p className="text-sm text-gray-500">Not detected</p>
-                  }
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">Detecting...</p>
-            )}
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-8 space-y-5">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Your Hardware</p>
+          {gpuName && (
+            <p className="text-xs text-gray-600 truncate max-w-xs" title={gpuName}>{gpuName}</p>
+          )}
+        </div>
+
+        {/* VRAM */}
+        <div>
+          <div className="flex items-baseline gap-2 mb-3">
+            <p className="text-sm font-medium text-gray-300">GPU VRAM</p>
+            {manualVram !== null
+              ? <span className="text-xs text-blue-400">{manualVram} GB selected</span>
+              : <span className="text-xs text-gray-600">select to filter models</span>
+            }
           </div>
-          {/* VRAM override */}
-          <div>
-            <p className="text-xs text-gray-500 mb-2">VRAM (GB)</p>
-            <div className="flex gap-1 flex-wrap">
-              {[4, 6, 8, 10, 12, 16, 24, 32, 48, 80].map(v => (
-                <button
-                  key={v}
-                  onClick={() => setManualVram(manualVram === v ? null : v)}
-                  className={`px-2.5 py-1 text-xs rounded border transition-colors ${
-                    (manualVram === v) || (manualVram === null && gpu.vram === v)
-                      ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
-                      : "border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300"
-                  }`}
-                >
-                  {v}GB
-                </button>
-              ))}
-            </div>
+          <div className="flex gap-2 flex-wrap">
+            {[4, 6, 8, 10, 12, 16, 24, 32, 48, 80].map(v => (
+              <button
+                key={v}
+                onClick={() => setManualVram(manualVram === v ? null : v)}
+                className={`px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
+                  manualVram === v
+                    ? "bg-blue-500/20 border-blue-500/50 text-blue-300 shadow-sm shadow-blue-500/10"
+                    : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200 hover:bg-gray-800"
+                }`}
+              >
+                {v} GB
+              </button>
+            ))}
           </div>
-          {/* RAM override */}
-          <div>
-            <p className="text-xs text-gray-500 mb-2">System RAM (GB)</p>
-            <div className="flex gap-1 flex-wrap">
-              {[4, 8, 16, 32, 64, 128].map(v => (
-                <button
-                  key={v}
-                  onClick={() => setManualRam(manualRam === v ? null : v)}
-                  className={`px-2.5 py-1 text-xs rounded border transition-colors ${
-                    manualRam === v
-                      ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
-                      : "border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300"
-                  }`}
-                >
-                  {v}GB
-                </button>
-              ))}
-            </div>
+        </div>
+
+        {/* RAM */}
+        <div>
+          <div className="flex items-baseline gap-2 mb-3">
+            <p className="text-sm font-medium text-gray-300">System RAM</p>
+            <span className="text-xs text-gray-600">used when running without a GPU</span>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {[4, 8, 16, 32, 64, 128].map(v => (
+              <button
+                key={v}
+                onClick={() => setManualRam(manualRam === v ? null : v)}
+                className={`px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
+                  manualRam === v
+                    ? "bg-blue-500/20 border-blue-500/50 text-blue-300 shadow-sm shadow-blue-500/10"
+                    : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200 hover:bg-gray-800"
+                }`}
+              >
+                {v} GB
+              </button>
+            ))}
           </div>
         </div>
       </div>
