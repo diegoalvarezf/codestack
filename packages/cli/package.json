@@ -1,5 +1,5 @@
 {
-  "name": "@sallyheller/mcphub",
+  "name": "@diegoalvarezf/mcphub",
   "version": "0.1.0",
   "description": "Install and manage MCP servers across Claude Code, Cursor, and Continue",
   "bin": {
@@ -28,7 +28,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sallyheller/mcp-registry"
+    "url": "https://github.com/diegoalvarezf/mcp-registry"
   },
   "homepage": "https://mcp-registry-sigma.vercel.app/install-cli",
   "dependencies": {

@@ -51,7 +51,7 @@ export function ExploreSection({ curated, community, serversLabel, skillsLabel, 
         className="w-full group flex items-center justify-between px-5 py-4 rounded-xl border border-gray-800 bg-gray-900 hover:border-gray-600 hover:bg-gray-800 transition-all"
       >
         <div className="flex items-center gap-3">
-          <span className="text-xl">🗺️</span>
+          <span className="text-xl">◈</span>
           <div className="text-left">
             <p className="font-semibold text-white group-hover:text-blue-400 transition-colors">Explore stacks</p>
             <p className="text-xs text-gray-500 mt-0.5">{curated.length} curated · {community.length} community</p>

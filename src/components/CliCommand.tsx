@@ -22,7 +22,7 @@ export function CliCommand() {
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-lg px-5 py-2.5 font-mono text-sm text-gray-300">
       <span className="text-gray-600 select-none">$ </span>
-      npx @sallyheller/mcphub install{" "}
+      npx @diegoalvarezf/mcphub install{" "}
       <span className="inline-block overflow-hidden align-bottom" style={{ height: "1.25em" }}>
         <span
           className="inline-block text-blue-400 transition-transform transition-opacity duration-400"

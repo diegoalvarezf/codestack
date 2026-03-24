@@ -11,7 +11,7 @@ const skills = [
     type: "prompt",
     tags: JSON.stringify(["code-review", "git", "quality"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     featured: true,
     content: `Review the current pull request or the last diff. Analyze:
@@ -34,7 +34,7 @@ Format your response as:
     type: "prompt",
     tags: JSON.stringify(["git", "productivity"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     featured: true,
     content: `Look at the staged changes (git diff --cached) and generate a conventional commit message.
@@ -58,7 +58,7 @@ Only output the commit message, nothing else.`,
     type: "prompt",
     tags: JSON.stringify(["documentation", "learning"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     content: `Explain the selected code or the current file in plain English.
 
@@ -77,7 +77,7 @@ Adjust the depth based on code complexity. Use analogies where helpful.`,
     type: "prompt",
     tags: JSON.stringify(["testing", "quality"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     featured: true,
     content: `Write comprehensive tests for the current file or selected function.
@@ -99,7 +99,7 @@ Add comments explaining why each test case matters.`,
     type: "prompt",
     tags: JSON.stringify(["refactoring", "quality", "code-review"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     content: `Refactor the selected code or current file. Focus on:
 
@@ -119,7 +119,7 @@ Show the before/after diff and explain each change briefly.`,
     type: "prompt",
     tags: JSON.stringify(["debugging", "productivity"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     content: `Diagnose and fix the bug or error described.
 
@@ -139,7 +139,7 @@ Don't refactor unrelated code — only fix what's broken.`,
     type: "prompt",
     tags: JSON.stringify(["documentation", "productivity"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     content: `Add documentation to the current file or selected code.
 
@@ -156,7 +156,7 @@ Don't refactor unrelated code — only fix what's broken.`,
     type: "prompt",
     tags: JSON.stringify(["security", "code-review"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     content: `Perform a security audit of the current file or selected code.
 
@@ -181,7 +181,7 @@ Provide a fix or mitigation for each issue found.`,
     type: "agent",
     tags: JSON.stringify(["engineering", "code-quality"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     featured: true,
     content: `You are a senior software engineer with 10+ years of experience building production systems.
@@ -210,7 +210,7 @@ You avoid: premature abstraction, unnecessary dependencies, clever code.`,
     type: "agent",
     tags: JSON.stringify(["architecture", "planning", "leadership"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     content: `You are a tech lead responsible for the technical direction of a product team.
 
@@ -239,7 +239,7 @@ When planning a feature:
     type: "agent",
     tags: JSON.stringify(["devops", "infrastructure", "reliability"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     content: `You are a DevOps engineer with deep expertise in CI/CD, cloud infrastructure, and site reliability.
 
@@ -265,7 +265,7 @@ Tooling expertise: Docker, Kubernetes, Terraform, GitHub Actions, AWS/GCP/Azure,
     type: "agent",
     tags: JSON.stringify(["security", "audit"]),
     authorName: "MCPHub",
-    authorUrl: "https://github.com/sallyheller",
+    authorUrl: "https://github.com/diegoalvarezf",
     verified: true,
     content: `You are an application security engineer with expertise in secure software development.
 

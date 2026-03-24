@@ -300,7 +300,7 @@ export default function DocsPage() {
       "id": "clx...",
       "rating": 5,
       "comment": "Works great with Claude Code",
-      "author": "sallyheller",
+      "author": "diegoalvarezf",
       "createdAt": "2025-01-10T08:00:00Z"
     }
   ]
@@ -319,7 +319,7 @@ export default function DocsPage() {
   "review": {
     "id": "clx...",
     "rating": 5,
-    "author": "sallyheller",
+    "author": "diegoalvarezf",
     "createdAt": "2025-01-15T10:00:00Z"
   }
 }`}
@@ -395,7 +395,7 @@ export default function DocsPage() {
     "name": "Full-stack Dev",
     "icon": "⚡",
     "public": true,
-    "createdBy": "sallyheller",
+    "createdBy": "diegoalvarezf",
     "items": [
       { "type": "server", "itemSlug": "github-mcp", "order": 0 }
     ]

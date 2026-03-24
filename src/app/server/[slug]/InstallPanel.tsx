@@ -67,7 +67,7 @@ export function InstallPanel({ slug, installCmd, configJson, envVars }: Props) {
   const [jsonCopied, setJsonCopied] = useState(false);
 
   const vscodeUri = buildVSCodeUri(slug, configJson, installCmd);
-  const npxCmd = `npx @sallyheller/mcphub install ${slug}`;
+  const npxCmd = `npx @diegoalvarezf/mcphub install ${slug}`;
   const jsonConfig = buildJsonConfig(activeClient, slug, configJson, installCmd);
 
   function copy(text: string, fn: (v: boolean) => void) {

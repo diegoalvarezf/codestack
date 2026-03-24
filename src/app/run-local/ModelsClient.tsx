@@ -183,7 +183,7 @@ export function ModelsClient() {
         <p className="text-gray-400 text-base sm:text-lg max-w-2xl">
           Find open models that fit your hardware. Filter by tool use support, context window, and get the install command for Ollama or LM Studio.
         </p>
-        <p className="text-xs text-gray-600 mt-3">Updated {LAST_UPDATED} · New models are released constantly — <a href="https://github.com/sallyheller/mcp-registry" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 underline underline-offset-2">contributions welcome</a></p>
+        <p className="text-xs text-gray-600 mt-3">Updated {LAST_UPDATED} · New models are released constantly — <a href="https://github.com/diegoalvarezf/mcp-registry" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 underline underline-offset-2">contributions welcome</a></p>
       </div>
 
       {/* Hardware panel */}

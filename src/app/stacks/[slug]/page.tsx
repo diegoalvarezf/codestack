@@ -164,7 +164,7 @@ export default async function StackPage({ params }: { params: { slug: string } }
           </div>
           <p className="text-xs text-gray-600">
             Installs all {totalItems} items · Requires{" "}
-            <span className="font-mono">npm install -g @sallyheller/mcphub</span>
+            <span className="font-mono">npm install -g @diegoalvarezf/mcphub</span>
           </p>
         </div>
       )}

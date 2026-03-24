@@ -20,7 +20,7 @@ export default function GlobalError({
       <p className="text-gray-400 mb-2">
         An unexpected error occurred. If this keeps happening, please{" "}
         <a
-          href="https://github.com/sallyheller/mcp-registry/issues"
+          href="https://github.com/diegoalvarezf/mcp-registry/issues"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-400 hover:text-blue-300 underline"

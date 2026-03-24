@@ -671,8 +671,8 @@ const servers = [
     name: "Context Pilot",
     description: "Intelligent context middleware — semantic search and memory for your codebase.",
     longDesc: "Indexes your codebase with embeddings, builds a dependency graph, and injects relevant context dynamically. Keeps architectural decisions persistent across sessions.",
-    repoUrl: "https://github.com/sallyheller/context-pilot",
-    authorName: "sallyheller",
+    repoUrl: "https://github.com/diegoalvarezf/context-pilot",
+    authorName: "diegoalvarezf",
     license: "MIT",
     version: "0.1.0",
     tags: JSON.stringify(["context", "embeddings", "memory", "community"]),
@@ -685,7 +685,7 @@ const servers = [
     installCmd: "npx -y context-pilot serve",
     configJson: JSON.stringify({ command: "npx", args: ["-y", "context-pilot", "serve"] }),
     envVars: JSON.stringify([]),
-    createdBy: "sallyheller",
+    createdBy: "diegoalvarezf",
   },
 ];
 
