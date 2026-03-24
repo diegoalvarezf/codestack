@@ -25,12 +25,14 @@ export default async function SubmitPage({
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">{t.submitTitle}</h1>
-        <p className="text-gray-400 text-sm">
-          {t.submitDesc}
-        </p>
+        <p className="text-gray-400 text-sm">{t.submitDesc}</p>
       </div>
 
-      <SubmitForm defaultType={defaultType as any} />
+      <SubmitForm
+        defaultType={defaultType as any}
+        authorName={session.user.name ?? session.user.githubLogin ?? ""}
+        authorUrl={`https://github.com/${session.user.githubLogin}`}
+      />
     </div>
   );
 }

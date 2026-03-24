@@ -122,7 +122,7 @@ const colorMap: Record<string, { active: string; ring: string; btn: string }> = 
   orange: { active: "border-orange-500/40 bg-orange-500/10 text-orange-300", ring: "ring-orange-500/30", btn: "bg-orange-600 hover:bg-orange-500" },
 };
 
-export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
+export function SubmitForm({ defaultType, authorName: initialAuthorName = "", authorUrl: initialAuthorUrl = "" }: { defaultType?: SubmitType; authorName?: string; authorUrl?: string }) {
   const router = useRouter();
   const [type, setType] = useState<SubmitType>(defaultType ?? "server");
   const [published, setPublished] = useState(true);
@@ -140,8 +140,9 @@ export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
   const [clients, setClients] = useState<string[]>(["claude-code"]);
   const [transport, setTransport] = useState("stdio");
   const [license, setLicense] = useState("MIT");
-  const [authorName, setAuthorName] = useState("");
-  const [authorUrl, setAuthorUrl] = useState("");
+  const [authorName, setAuthorName] = useState(initialAuthorName);
+  const [authorUrl, setAuthorUrl] = useState(initialAuthorUrl);
+  const [repoFetching, setRepoFetching] = useState(false);
 
   // Skill/Agent fields
   const [slug, setSlug] = useState("");
@@ -176,6 +177,46 @@ export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
     setFetching(false);
   }
 
+  async function fetchServerFromGitHub() {
+    if (!repoUrl) return;
+    const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) return;
+    const [, owner, repoName] = match;
+    setRepoFetching(true);
+    try {
+      // Fetch repo info + package.json in parallel
+      const [repoRes, pkgRes] = await Promise.all([
+        fetch(`https://api.github.com/repos/${owner}/${repoName}`),
+        (async () => {
+          for (const branch of ["main", "master"]) {
+            const r = await fetch(`https://raw.githubusercontent.com/${owner}/${repoName}/${branch}/package.json`);
+            if (r.ok) return r;
+          }
+          return null;
+        })(),
+      ]);
+
+      if (repoRes.ok) {
+        const repo = await repoRes.json();
+        if (!name) setName(repo.name ?? "");
+        if (!description) setDescription(repo.description ?? "");
+        if (!license && repo.license?.spdx_id) setLicense(repo.license.spdx_id);
+        if (!tags && repo.topics?.length) setTags((repo.topics as string[]).slice(0, 5).join(", "));
+      }
+
+      if (pkgRes && pkgRes.ok) {
+        const pkg = await pkgRes.json();
+        if (!npmPackage && pkg.name) {
+          setNpmPackage(pkg.name);
+          if (!installCmd) setInstallCmd(`npx -y ${pkg.name}`);
+        }
+        if (!name && pkg.name) setName(pkg.name);
+        if (!description && pkg.description) setDescription(pkg.description);
+      }
+    } catch {}
+    setRepoFetching(false);
+  }
+
   function toggleClient(c: string) {
     setClients(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
   }
@@ -204,7 +245,7 @@ export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? "Error submitting");
-        router.push(`/servers/${data.server.slug}`);
+        router.push(`/server/${data.server.slug}`);
       } else {
         const tagsArr = tags.split(",").map(t => t.trim()).filter(Boolean);
         const computedSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -314,7 +355,16 @@ export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
               placeholder="https://github.com/username/repo"
               className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500"
             />
-            {type !== "server" && (
+            {type === "server" ? (
+              <button
+                type="button"
+                onClick={fetchServerFromGitHub}
+                disabled={!repoUrl || repoFetching}
+                className="shrink-0 px-4 py-2.5 text-sm border border-gray-700 rounded-lg text-gray-300 hover:text-white hover:border-gray-500 transition-colors disabled:opacity-40"
+              >
+                {repoFetching ? "Fetching..." : "Auto-fill"}
+              </button>
+            ) : (
               <button
                 type="button"
                 onClick={fetchFromGitHub}
@@ -338,21 +388,35 @@ export function SubmitForm({ defaultType }: { defaultType?: SubmitType }) {
             <div>
               <label className="block text-xs text-gray-500 mb-1.5">npm Package</label>
               <input
-                value={npmPackage} onChange={e => setNpmPackage(e.target.value)}
+                value={npmPackage}
+                onChange={e => {
+                  const pkg = e.target.value;
+                  setNpmPackage(pkg);
+                  if (pkg && !installCmd) setInstallCmd(`npx -y ${pkg}`);
+                }}
+                onBlur={e => {
+                  const pkg = e.target.value;
+                  if (pkg && !installCmd) setInstallCmd(`npx -y ${pkg}`);
+                }}
                 placeholder="@modelcontextprotocol/server-github"
                 className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">Install command</label>
+              <label className="block text-xs text-gray-500 mb-1.5">
+                Install command
+                {npmPackage && !installCmd && <span className="ml-1 text-gray-600">(auto-generated from npm package)</span>}
+              </label>
               <input
                 value={installCmd} onChange={e => setInstallCmd(e.target.value)}
-                placeholder="npx -y @modelcontextprotocol/server-github"
+                placeholder={npmPackage ? `npx -y ${npmPackage}` : "npx -y @modelcontextprotocol/server-github"}
                 className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">MCP Tools (comma separated) *</label>
+              <label className="block text-xs text-gray-500 mb-1.5">
+                Tools exposed <span className="text-gray-600">(comma separated)</span> *
+              </label>
               <input
                 value={tools} onChange={e => setTools(e.target.value)} required
                 placeholder="create_file, read_file, list_directory"
