@@ -4,6 +4,7 @@ import { submitServerSchema } from "@/lib/validations";
 import { auth } from "@/lib/auth";
 import { rateLimit, getIp } from "@/lib/rate-limit";
 import { sanitizeStrings } from "@/lib/sanitize";
+import { parseServer } from "@/lib/parse-server";
 
 function extractOwnerRepo(url: string) {
   const m = url.match(/github\.com\/([^/]+)\/([^/]+?)(?:\.git)?(?:\/.*)?$/);
@@ -40,15 +41,6 @@ function slugify(name: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function parse(server: any) {
-  return {
-    ...server,
-    tags: JSON.parse(server.tags),
-    tools: JSON.parse(server.tools),
-    clients: JSON.parse(server.clients),
-  };
-}
-
 // GET /api/servers — public API
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -67,7 +59,7 @@ export async function GET(req: NextRequest) {
     take: limit,
   });
 
-  let results = servers.map(parse);
+  let results = servers.map(parseServer);
 
   if (query) {
     const q = query.toLowerCase();
@@ -91,7 +83,7 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = getIp(req);
-  const rl = rateLimit(ip, "POST /api/servers", 5, 60 * 60 * 1000);
+  const rl = await rateLimit(ip, "POST /api/servers", 5, 60 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Try again later." },
@@ -159,5 +151,5 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ server: parse(server) }, { status: 201 });
+  return NextResponse.json({ server: parseServer(server) }, { status: 201 });
 }

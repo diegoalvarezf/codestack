@@ -1,10 +1,16 @@
 /**
- * Simple in-memory rate limiter.
- * Uses a sliding window per (key, route) pair.
- *
- * NOTE: This is per-instance — for multi-instance deployments (e.g. Vercel Edge),
- * replace with a Redis-backed solution (e.g. @upstash/ratelimit).
+ * Rate limiter with automatic fallback:
+ * - If UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN are set → Upstash Redis (distributed, works across Vercel instances)
+ * - Otherwise → in-memory (single instance only, fine for local dev)
  */
+
+export interface RateLimitResult {
+  allowed: boolean;
+  remaining: number;
+  resetAt: number;
+}
+
+// ── In-memory fallback ─────────────────────────────────────────────────────
 
 interface Window {
   count: number;
@@ -21,19 +27,7 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
-export interface RateLimitResult {
-  allowed: boolean;
-  remaining: number;
-  resetAt: number;
-}
-
-/**
- * @param key      Unique identifier for the caller (e.g. IP address)
- * @param route    Route identifier (e.g. "POST /api/servers")
- * @param limit    Max requests allowed per window
- * @param windowMs Window duration in milliseconds
- */
-export function rateLimit(
+function rateLimitInMemory(
   key: string,
   route: string,
   limit: number,
@@ -55,6 +49,69 @@ export function rateLimit(
     remaining: Math.max(0, limit - win.count),
     resetAt: win.resetAt,
   };
+}
+
+// ── Upstash Redis (distributed) ────────────────────────────────────────────
+
+import type { Ratelimit as RatelimitType } from "@upstash/ratelimit";
+
+const limiterCache = new Map<string, RatelimitType>();
+
+async function rateLimitUpstash(
+  key: string,
+  route: string,
+  limit: number,
+  windowMs: number
+): Promise<RateLimitResult> {
+  const { Ratelimit } = await import("@upstash/ratelimit");
+  const { Redis } = await import("@upstash/redis");
+
+  const cacheKey = `${route}:${limit}:${windowMs}`;
+  let limiter = limiterCache.get(cacheKey);
+
+  if (!limiter) {
+    limiter = new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
+      prefix: `rl:${route}`,
+    });
+    limiterCache.set(cacheKey, limiter);
+  }
+
+  const { success, remaining, reset } = await limiter.limit(key);
+
+  return {
+    allowed: success,
+    remaining,
+    resetAt: reset,
+  };
+}
+
+// ── Public API ─────────────────────────────────────────────────────────────
+
+function isUpstashConfigured(): boolean {
+  return (
+    !!process.env.UPSTASH_REDIS_REST_URL &&
+    !!process.env.UPSTASH_REDIS_REST_TOKEN
+  );
+}
+
+/**
+ * @param key      Unique identifier for the caller (e.g. IP address)
+ * @param route    Route identifier (e.g. "POST /api/servers")
+ * @param limit    Max requests allowed per window
+ * @param windowMs Window duration in milliseconds
+ */
+export async function rateLimit(
+  key: string,
+  route: string,
+  limit: number,
+  windowMs: number
+): Promise<RateLimitResult> {
+  if (isUpstashConfigured()) {
+    return rateLimitUpstash(key, route, limit, windowMs);
+  }
+  return rateLimitInMemory(key, route, limit, windowMs);
 }
 
 /**

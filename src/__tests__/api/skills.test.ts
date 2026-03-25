@@ -141,7 +141,7 @@ describe("POST /api/skills", () => {
 
   it("returns 429 when rate limit exceeded", async () => {
     vi.mocked(auth).mockResolvedValue({ user: { githubLogin: "alice" } } as any);
-    vi.mocked(rateLimit).mockReturnValueOnce({ allowed: false, remaining: 0, resetAt: Date.now() + 3600_000 });
+    vi.mocked(rateLimit).mockResolvedValueOnce({ allowed: false, remaining: 0, resetAt: Date.now() + 3600_000 });
     const req = makeRequest("/api/skills", {
       method: "POST",
       body: JSON.stringify(validSkillPayload),

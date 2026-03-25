@@ -49,6 +49,6 @@ vi.mock("@/lib/auth", () => ({
 // ── Mock rate-limit (always allow in tests) ───────────────────────────────────
 
 vi.mock("@/lib/rate-limit", () => ({
-  rateLimit: vi.fn().mockReturnValue({ allowed: true, remaining: 99, resetAt: Date.now() + 3600_000 }),
+  rateLimit: vi.fn().mockResolvedValue({ allowed: true, remaining: 99, resetAt: Date.now() + 3600_000 }),
   getIp: vi.fn().mockReturnValue("127.0.0.1"),
 }));

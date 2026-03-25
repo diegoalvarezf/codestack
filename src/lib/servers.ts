@@ -1,17 +1,7 @@
 import { prisma } from "./db";
-import type { McpServer } from "./types";
+import { parseServer } from "./parse-server";
 
 const PAGE_SIZE = 24;
-
-function parse(server: any): McpServer {
-  return {
-    ...server,
-    tags: JSON.parse(server.tags),
-    tools: JSON.parse(server.tools),
-    clients: JSON.parse(server.clients),
-    envVars: server.envVars ? JSON.parse(server.envVars) : null,
-  };
-}
 
 export type SortMode = "featured" | "popular" | "trending" | "hot" | "new";
 
@@ -43,7 +33,7 @@ export async function getServers(opts?: {
     prisma.server.findMany({ where, orderBy, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE }),
   ]);
 
-  return { servers: servers.map(parse), total, pages: Math.ceil(total / PAGE_SIZE) };
+  return { servers: servers.map(parseServer), total, pages: Math.ceil(total / PAGE_SIZE) };
 }
 
 async function getServersWithFullTextSearch(opts: {
@@ -101,7 +91,7 @@ async function getServersWithFullTextSearch(opts: {
   const byId = new Map(servers.map((s) => [s.id, s]));
   const ordered = ids.map((id) => byId.get(id)!).filter(Boolean);
 
-  return { servers: ordered.map(parse), total, pages: Math.ceil(total / PAGE_SIZE) };
+  return { servers: ordered.map(parseServer), total, pages: Math.ceil(total / PAGE_SIZE) };
 }
 
 function buildOrderBy(sort: SortMode): any[] {
@@ -126,7 +116,7 @@ function buildOrderBySql(sort: SortMode): string {
 
 export async function getServersBySlugs(slugs: string[]): Promise<McpServer[]> {
   const servers = await prisma.server.findMany({ where: { slug: { in: slugs } } });
-  return servers.map(parse);
+  return servers.map(parseServer);
 }
 
 export async function getServer(
@@ -137,5 +127,5 @@ export async function getServer(
     include: { reviews: { orderBy: { createdAt: "desc" } } },
   });
   if (!server) return null;
-  return { ...parse(server), reviews: server.reviews };
+  return { ...parseServer(server), reviews: server.reviews };
 }

@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 // POST — 10 skill submissions per hour per IP
 export async function POST(req: NextRequest) {
   const ip = getIp(req);
-  const rl = rateLimit(ip, "POST /api/skills", 10, 60 * 60 * 1000);
+  const rl = await rateLimit(ip, "POST /api/skills", 10, 60 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Try again later." },

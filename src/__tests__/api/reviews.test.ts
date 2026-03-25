@@ -115,7 +115,7 @@ describe("POST /api/servers/[slug]/reviews", () => {
   });
 
   it("returns 429 when rate limit exceeded", async () => {
-    vi.mocked(rateLimit).mockReturnValueOnce({ allowed: false, remaining: 0, resetAt: Date.now() + 3600_000 });
+    vi.mocked(rateLimit).mockResolvedValueOnce({ allowed: false, remaining: 0, resetAt: Date.now() + 3600_000 });
     const req = makeRequest("test-server", {
       method: "POST",
       body: JSON.stringify({ rating: 3, author: "Spammer" }),

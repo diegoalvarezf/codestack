@@ -31,7 +31,7 @@ export async function POST(
   { params }: { params: { slug: string } }
 ) {
   const ip = getIp(req);
-  const rl = rateLimit(ip, "POST /api/servers/reviews", 10, 60 * 60 * 1000);
+  const rl = await rateLimit(ip, "POST /api/servers/reviews", 10, 60 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Try again later." },
