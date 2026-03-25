@@ -1,5 +1,6 @@
 import { prisma } from "./db";
 import { parseServer } from "./parse-server";
+import type { McpServer } from "./types";
 
 const PAGE_SIZE = 24;
 
