@@ -19,7 +19,7 @@ export interface McpServer {
   tools: string[];
 }
 
-const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://mcp-registry-sigma.vercel.app";
+const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://codestack-sigma.vercel.app";
 
 export async function fetchServer(slug: string): Promise<McpServer | null> {
   const res = await fetch(`${REGISTRY_URL}/api/servers/${encodeURIComponent(slug)}`);

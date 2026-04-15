@@ -10,8 +10,8 @@ export async function installCommand(slug: string, envOverrides: Record<string, 
 
   const server = await fetchServer(slug).catch(() => null);
   if (!server) {
-    spinner.fail(`"${slug}" not found in MCPHub.`);
-    console.log(chalk.gray(`  Try: npx @mcphub/cli search ${slug}`));
+    spinner.fail(`"${slug}" not found in Codestack.`);
+    console.log(chalk.gray(`  Try: npx @codestack/cli search ${slug}`));
     process.exit(1);
   }
 

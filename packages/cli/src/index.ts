@@ -13,12 +13,12 @@ const program = new Command();
 
 program
   .name("mcp")
-  .description(chalk.bold("MCPHub CLI") + " — Install and manage MCP servers")
+  .description(chalk.bold("Codestack CLI") + " — Install and manage MCP servers")
   .version("0.1.0");
 
 program
   .command("install <slug>")
-  .description("Install an MCP server from MCPHub")
+  .description("Install an MCP server from Codestack")
   .option("-e, --env <KEY=VALUE...>", "Set environment variables (skip interactive prompts)")
   .action(async (slug: string, opts: { env?: string[] }) => {
     const envOverrides: Record<string, string> = {};
@@ -45,7 +45,7 @@ program
 
 program
   .command("search <query>")
-  .description("Search MCP servers in MCPHub")
+  .description("Search MCP servers in Codestack")
   .action(async (query: string) => {
     await searchCommand(query).catch((err) => {
       console.error(chalk.red("Error:"), err.message);
@@ -77,7 +77,7 @@ program
 
 program
   .command("install-skill <slug>")
-  .description("Install a prompt or agent from MCPHub Skills")
+  .description("Install a prompt or agent from Codestack Skills")
   .action(async (slug: string) => {
     await installSkillCommand(slug).catch((err) => {
       console.error(chalk.red("Error:"), err.message);

@@ -79,14 +79,14 @@ export async function listCommand() {
         }
       } else {
         // Not in registry — show slug with a note
-        console.log(`  ${chalk.green("●")} ${chalk.white(slug)} ${chalk.gray("(not in MCPHub registry)")}`);
+        console.log(`  ${chalk.green("●")} ${chalk.white(slug)} ${chalk.gray("(not in Codestack registry)")}`);
       }
     }
   }
 
   if (totalServers === 0) {
     console.log(chalk.gray("\nNo servers installed across any client."));
-    console.log(chalk.gray("Run: ") + chalk.cyan("mcp install <slug>") + chalk.gray(" to install from MCPHub.\n"));
+    console.log(chalk.gray("Run: ") + chalk.cyan("mcp install <slug>") + chalk.gray(" to install from Codestack.\n"));
   } else {
     console.log(chalk.gray(`\n${totalServers} server${totalServers !== 1 ? "s" : ""} installed across ${clients.length} client${clients.length !== 1 ? "s" : ""}.`));
     console.log(chalk.gray("Run: ") + chalk.cyan("mcp search <query>") + chalk.gray(" to find more.\n"));

@@ -8,7 +8,7 @@ import { detectClients, type DetectedClient } from "../lib/detect.js";
 import { installForClient, isAlreadyInstalled } from "../lib/config.js";
 import type { McpServer } from "../lib/api.js";
 
-const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://mcp-registry-sigma.vercel.app";
+const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://codestack-sigma.vercel.app";
 
 interface TeamSkill {
   id: string;
@@ -51,7 +51,7 @@ function installSkills(teamSlug: string, skills: TeamSkill[]): void {
 export async function syncCommand(teamSlug?: string, tokenFlag?: string) {
   if (!teamSlug) {
     console.log(chalk.red("Usage: mcp sync --team <slug> --token <token>"));
-    console.log(chalk.gray("  Get the sync command from your team page on MCPHub."));
+    console.log(chalk.gray("  Get the sync command from your team page on Codestack."));
     process.exit(1);
   }
 

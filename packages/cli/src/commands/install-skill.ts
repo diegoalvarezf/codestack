@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 
-const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://mcp-registry-sigma.vercel.app";
+const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://codestack-sigma.vercel.app";
 
 interface Skill {
   slug: string;
@@ -48,7 +48,7 @@ export async function installSkillCommand(slug: string) {
 
   if (!skill) {
     spinner.fail(`Skill ${chalk.bold(slug)} not found.`);
-    console.log(chalk.gray(`  Browse skills at https://mcp-registry-sigma.vercel.app/skills`));
+    console.log(chalk.gray(`  Browse skills at https://codestack-sigma.vercel.app/skills`));
     process.exit(1);
   }
 

@@ -3,7 +3,7 @@ import ora from "ora";
 import { installCommand } from "./install.js";
 import { installSkillCommand } from "./install-skill.js";
 
-const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://mcp-registry-sigma.vercel.app";
+const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://codestack-sigma.vercel.app";
 
 interface StackResponse {
   slug: string;
