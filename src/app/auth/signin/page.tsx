@@ -4,7 +4,7 @@ export default function SignInPage() {
   return (
     <div className="max-w-md mx-auto px-6 py-32 text-center">
       <div className="text-5xl mb-6">⬡</div>
-      <h1 className="text-2xl font-bold mb-3">Sign in to MCPHub</h1>
+      <h1 className="text-2xl font-bold mb-3">Sign in to Codestack</h1>
       <p className="text-gray-400 mb-8">
         Sign in with GitHub to submit and manage your MCP servers.
       </p>

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { NewTeamForm } from "./NewTeamForm";
 
-export const metadata: Metadata = { title: "New Team — MCPHub" };
+export const metadata: Metadata = { title: "New Team — Codestack" };
 
 export default async function NewTeamPage() {
   const session = await auth();

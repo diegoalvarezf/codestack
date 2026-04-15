@@ -7,7 +7,7 @@ import { SearchBar } from "@/components/SearchBar";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Skills — MCPHub",
+  title: "Skills — Codestack",
   description: "Prompts that become /slash-commands in Claude Code. Install in one command.",
 };
 

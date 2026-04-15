@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { CreateStackForm } from "./CreateStackForm";
 
-export const metadata = { title: "Create Stack — MCPHub" };
+export const metadata = { title: "Create Stack — Codestack" };
 
 export default async function NewStackPage() {
   const session = await auth();

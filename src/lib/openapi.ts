@@ -1,5 +1,5 @@
 /**
- * OpenAPI 3.1 specification for the MCPHub public API.
+ * OpenAPI 3.1 specification for the Codestack public API.
  * Served at GET /api/openapi.json and rendered at /docs.
  */
 
@@ -147,10 +147,10 @@ export function buildOpenApiSpec() {
   return {
     openapi: "3.1.0",
     info: {
-      title: "MCPHub API",
+      title: "Codestack API",
       version: "1.0.0",
       description: `
-The MCPHub public REST API lets you discover, search, and integrate MCP servers, skills, and stacks into your own tooling, CLIs, and AI workflows.
+The Codestack public REST API lets you discover, search, and integrate MCP servers, skills, and stacks into your own tooling, CLIs, and AI workflows.
 
 ## Base URL
 
@@ -187,7 +187,7 @@ All error responses share the same shape:
 Common status codes: **400** Bad request · **401** Unauthenticated · **403** Forbidden · **404** Not found · **409** Conflict (duplicate slug) · **422** Validation failed · **429** Rate limited.
       `.trim(),
       contact: {
-        name: "MCPHub",
+        name: "Codestack",
         url: REGISTRY_URL,
       },
       license: { name: "MIT" },

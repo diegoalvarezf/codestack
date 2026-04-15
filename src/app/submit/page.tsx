@@ -5,8 +5,8 @@ import { SubmitForm } from "./SubmitForm";
 import { getT } from "@/lib/i18n";
 
 export const metadata = {
-  title: "Submit — MCPHub",
-  description: "Submit an MCP Server, Skill, or Agent to the MCPHub registry",
+  title: "Submit — Codestack",
+  description: "Submit an MCP Server, Skill, or Agent to the Codestack registry",
 };
 
 export default async function SubmitPage({

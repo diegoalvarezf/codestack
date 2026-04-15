@@ -32,7 +32,7 @@ function parseInstallCmd(cmd: string): Entry {
 function buildEntry(configJson: string | null, installCmd: string | null): Entry {
   return configJson
     ? (JSON.parse(configJson) as Entry)
-    : parseInstallCmd(installCmd ?? "npx -y @mcphub/server");
+    : parseInstallCmd(installCmd ?? "npx -y @ codestack/server");
 }
 
 function buildVSCodeUri(slug: string, configJson: string | null, installCmd: string | null): string | null {
@@ -67,7 +67,7 @@ export function InstallPanel({ slug, installCmd, configJson, envVars }: Props) {
   const [jsonCopied, setJsonCopied] = useState(false);
 
   const vscodeUri = buildVSCodeUri(slug, configJson, installCmd);
-  const npxCmd = `npx @diegoalvarezf/mcphub install ${slug}`;
+  const npxCmd = `npx @diegoalvarezf/codestack install ${slug}`;
   const jsonConfig = buildJsonConfig(activeClient, slug, configJson, installCmd);
 
   function copy(text: string, fn: (v: boolean) => void) {

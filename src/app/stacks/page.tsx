@@ -7,7 +7,7 @@ import { getT } from "@/lib/i18n";
 import { ExploreSection } from "./ExploreSection";
 
 export const metadata: Metadata = {
-  title: "Stacks — MCPHub",
+  title: "Stacks — Codestack",
   description: "Curated and community-created collections of MCP servers, skills, and agents.",
 };
 

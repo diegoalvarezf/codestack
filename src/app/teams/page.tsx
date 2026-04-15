@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "My Teams — MCPHub" };
+export const metadata: Metadata = { title: "My Teams — Codestack" };
 
 export default async function TeamsPage() {
   const session = await auth();

@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const team = await prisma.team.findUnique({ where: { slug: params.slug } });
-  return { title: team ? `${team.name} — MCPHub` : "Team — MCPHub" };
+  return { title: team ? `${team.name} — Codestack` : "Team — Codestack" };
 }
 
 export default async function TeamPage({
@@ -158,7 +158,7 @@ export default async function TeamPage({
                 <CopyButton text={syncCmd} />
               </div>
               <p className="text-xs text-gray-600 mt-2">
-                Requires <a href="/install-cli" className="text-blue-400/70 hover:text-blue-400">MCPHub CLI</a>
+                Requires <a href="/install-cli" className="text-blue-400/70 hover:text-blue-400">Codestack CLI</a>
               </p>
             </div>
           </section>

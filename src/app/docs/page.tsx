@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { CopyButton } from "./CopyButton";
 
 export const metadata: Metadata = {
-  title: "API Reference — MCPHub",
+  title: "API Reference — Codestack",
   description: "REST API to discover, search, and integrate MCP servers, skills, and stacks.",
 };
 
-const BASE = "https://mcphub.io";
+const BASE = "https://codestack.dev";
 
 const METHOD_COLOR: Record<string, string> = {
   GET:    "bg-blue-500/15 text-blue-400 border-blue-500/30",
@@ -128,7 +128,7 @@ export default function DocsPage() {
           <span className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
           REST API · v1
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold mb-4">MCPHub API</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-4">Codestack API</h1>
         <p className="text-gray-400 text-lg max-w-2xl leading-relaxed">
           Discover, search, and integrate MCP servers, skills, and stacks into your own tooling, CLIs, and AI workflows.
         </p>

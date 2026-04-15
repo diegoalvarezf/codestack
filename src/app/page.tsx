@@ -231,7 +231,7 @@ export default async function HomePage({
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1 text-sm text-gray-400">
                 <span className="text-white font-medium">{t.mcpBannerTitle}</span> {t.mcpBannerDesc}{" "}
-                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">npx @diegoalvarezf/mcphub install github</code>{" "}
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">npx @diegoalvarezf/codestack install github</code>{" "}
                 {t.mcpBannerDesc2}
               </div>
               <a href="/submit" className="shrink-0 text-xs text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg hover:bg-blue-500/10 transition-colors">
@@ -359,7 +359,7 @@ export default async function HomePage({
               <div className="flex-1 text-sm text-gray-400">
                 <span className="text-white font-medium">{t.skillsBannerTitle}</span> {t.skillsBannerDesc}{" "}
                 <code className="bg-gray-800 px-1.5 py-0.5 rounded text-purple-400 text-xs">/slash-commands</code> {t.skillsBannerDesc2}{" "}
-                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">npx @diegoalvarezf/mcphub install-skill review-pr</code>{" "}
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">npx @diegoalvarezf/codestack install-skill review-pr</code>{" "}
                 {t.skillsBannerDesc3} <code className="bg-gray-800 px-1.5 py-0.5 rounded text-purple-400 text-xs">/review-pr</code> {t.skillsBannerDesc4}
               </div>
               <a href="/submit?type=prompt" className="shrink-0 text-xs text-purple-400 border border-purple-500/30 px-3 py-1.5 rounded-lg hover:bg-purple-500/10 transition-colors">
@@ -473,7 +473,7 @@ export default async function HomePage({
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1 text-sm text-gray-400">
                 <span className="text-white font-medium">{t.agentsBannerTitle}</span> {t.agentsBannerDesc}{" "}
-                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">npx @diegoalvarezf/mcphub install-skill senior-engineer</code>{" "}
+                <code className="bg-gray-800 px-1.5 py-0.5 rounded text-green-400 text-xs">npx @diegoalvarezf/codestack install-skill senior-engineer</code>{" "}
                 {t.agentsBannerDesc2}
               </div>
               <a href="/submit?type=agent" className="shrink-0 text-xs text-orange-400 border border-orange-500/30 px-3 py-1.5 rounded-lg hover:bg-orange-500/10 transition-colors">

@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const server = await getServer(params.slug);
   if (!server) return {};
-  const title = `${server.name} — MCPHub`;
+  const title = `${server.name} — Codestack`;
   const description = server.description;
   return {
     title,
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title,
       description,
       url: `https://mcp-registry-sigma.vercel.app/server/${server.slug}`,
-      siteName: "MCPHub",
+      siteName: "Codestack",
       type: "website",
     },
     twitter: { card: "summary", title, description },

@@ -5,8 +5,8 @@ import { getT } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Security Audits — MCPHub",
-  description: "Security audit status of all MCP servers in the MCPHub registry",
+  title: "Security Audits — Codestack",
+  description: "Security audit status of all MCP servers in the Codestack registry",
 };
 
 const RISK_ORDER = ["safe", "low", "medium", "high", "unknown"];
@@ -70,9 +70,9 @@ export default async function AuditsPage() {
       {/* Info banner */}
       <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 mb-8 text-sm text-gray-400">
         <span className="text-blue-400 font-medium">How audits work: </span>
-        MCPHub manually reviews submitted servers. Servers are checked for credential theft, data exfiltration, code injection,
+        Codestack manually reviews submitted servers. Servers are checked for credential theft, data exfiltration, code injection,
         and prompt injection vulnerabilities. Verified servers have passed our review.{" "}
-        <a href="mailto:security@mcphub.dev" className="text-blue-400 hover:underline">Report a security issue →</a>
+        <a href="mailto:security@codestack.dev" className="text-blue-400 hover:underline">Report a security issue →</a>
       </div>
 
       {/* Table */}

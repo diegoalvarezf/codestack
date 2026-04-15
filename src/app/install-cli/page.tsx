@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CopyButton } from "@/components/CopyButton";
 
 export const metadata: Metadata = {
-  title: "Install MCPHub CLI — mcp install",
+  title: "Install Codestack CLI — mcp install",
   description: "Install MCP servers with one command across Claude Code, Cursor, and Continue.",
 };
 
@@ -25,7 +25,7 @@ const commands = [
   },
   {
     cmd: "mcp search database",
-    desc: "Search servers in the MCPHub registry",
+    desc: "Search servers in the Codestack registry",
   },
   {
     cmd: "mcp list",
@@ -45,7 +45,7 @@ export default function InstallCliPage() {
           <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
           Free & open source
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold mb-4">MCPHub CLI</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-4">Codestack CLI</h1>
         <p className="text-gray-400 text-lg max-w-xl mx-auto">
           Install and manage MCP servers across Claude Code, Cursor, and Continue.dev with a single command.
         </p>
@@ -58,9 +58,9 @@ export default function InstallCliPage() {
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex items-center justify-between gap-4">
             <div className="font-mono text-sm">
               <span className="text-gray-500">$ </span>
-              <span className="text-green-400">npm install -g @diegoalvarezf/mcphub</span>
+              <span className="text-green-400">npm install -g @diegoalvarezf/codestack</span>
             </div>
-            <CopyButton text="npm install -g @diegoalvarezf/mcphub" />
+            <CopyButton text="npm install -g @diegoalvarezf/codestack" />
           </div>
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-gray-800" />
@@ -70,9 +70,9 @@ export default function InstallCliPage() {
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex items-center justify-between gap-4">
             <div className="font-mono text-sm">
               <span className="text-gray-500">$ </span>
-              <span className="text-blue-400">npx @diegoalvarezf/mcphub install github</span>
+              <span className="text-blue-400">npx @diegoalvarezf/codestack install github</span>
             </div>
-            <CopyButton text="npx @diegoalvarezf/mcphub install github" />
+            <CopyButton text="npx @diegoalvarezf/codestack install github" />
           </div>
           <p className="text-xs text-gray-600">
             Using <code className="bg-gray-900 px-1 rounded">npx</code> runs the latest version without a global install — useful for CI/CD or one-off installs.
@@ -104,7 +104,7 @@ export default function InstallCliPage() {
         <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-5">
           <h3 className="font-semibold text-white mb-1">Team sync</h3>
           <p className="text-sm text-gray-400 mb-4">
-            Create a team on MCPHub, add the servers your team uses, and share one command.
+            Create a team on Codestack, add the servers your team uses, and share one command.
             Every new developer runs it and gets the full stack configured in under a minute.
           </p>
           <div className="space-y-2">
@@ -133,7 +133,7 @@ export default function InstallCliPage() {
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">How it works</h2>
         <div className="space-y-4">
           {[
-            { step: "1", title: "Finds the server", desc: "Fetches metadata, install command and required env vars from MCPHub." },
+            { step: "1", title: "Finds the server", desc: "Fetches metadata, install command and required env vars from Codestack." },
             { step: "2", title: "Asks for credentials", desc: "Prompts only for the env vars the server needs (API keys, tokens, etc)." },
             { step: "3", title: "Detects your clients", desc: "Auto-detects Claude Code, Cursor and Continue.dev on your machine." },
             { step: "4", title: "Writes the config", desc: "Updates the correct config file for each client. No JSON editing needed." },

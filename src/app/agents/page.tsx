@@ -7,7 +7,7 @@ import { SearchBar } from "@/components/SearchBar";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Agents — MCPHub",
+  title: "Agents — Codestack",
   description: "AI agents with custom system prompts and persistent behavior. Install and run with one command.",
 };
 

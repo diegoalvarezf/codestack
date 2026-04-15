@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const skill = await getSkill(params.slug);
   if (!skill) return {};
   return {
-    title: `${skill.name} — MCPHub Skills`,
+    title: `${skill.name} — Codestack Skills`,
     description: skill.description,
   };
 }
@@ -117,7 +117,7 @@ export default async function SkillPage({ params }: { params: { slug: string } }
               <code className="block bg-gray-800 px-2 py-1.5 rounded text-purple-400 font-mono text-sm">/{skill.slug}</code>
             </div>
             <p className="text-xs text-gray-600">
-              {t.requiresCli} <a href="/install-cli" className="text-blue-400/70 hover:text-blue-400">MCPHub CLI</a>
+              {t.requiresCli} <a href="/install-cli" className="text-blue-400/70 hover:text-blue-400">Codestack CLI</a>
             </p>
             {skill.installCount > 0 && (
               <p className="text-xs text-gray-500 border-t border-gray-800 pt-2">↓ {skill.installCount.toLocaleString()} {t.installs}</p>

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Join Team — MCPHub" };
+export const metadata: Metadata = { title: "Join Team — Codestack" };
 
 export default async function JoinPage({ params }: { params: { token: string } }) {
   const session = await auth();
@@ -17,7 +17,7 @@ export default async function JoinPage({ params }: { params: { token: string } }
         <p className="text-4xl mb-4">🔗</p>
         <h1 className="text-xl font-bold mb-2">Invalid invite link</h1>
         <p className="text-gray-400 text-sm">This invite link is invalid or has expired.</p>
-        <a href="/" className="text-blue-400 hover:underline text-sm mt-4 inline-block">← Back to MCPHub</a>
+        <a href="/" className="text-blue-400 hover:underline text-sm mt-4 inline-block">← Back to Codestack</a>
       </div>
     );
   }

@@ -12,7 +12,7 @@ import { AddToStack } from "./AddToStack";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "My Library — MCPHub",
+  title: "My Library — Codestack",
 };
 
 function parseServer(s: any) {

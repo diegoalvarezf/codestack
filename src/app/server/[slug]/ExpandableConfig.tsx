@@ -20,7 +20,7 @@ const CLIENT_PATHS: Record<Client, string> = {
 
 function buildConfig(client: Client, slug: string, configJson: string | null): string {
   try {
-    const config = configJson ? JSON.parse(configJson) : { command: "npx", args: [`-y`, `@mcphub/${slug}`] };
+    const config = configJson ? JSON.parse(configJson) : { command: "npx", args: [`-y`, `@ codestack/${slug}`] };
     if (client === "continue") {
       return JSON.stringify({
         mcpServers: [{ name: slug, ...config }],

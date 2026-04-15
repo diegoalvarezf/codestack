@@ -98,7 +98,7 @@ export const translations = {
     createTeam: "Create team →",
 
     // Submit
-    submitTitle: "Submit to MCPHub",
+    submitTitle: "Submit to Codestack",
     submitDesc: "Share an MCP server, a skill, or an AI agent with the community — or save it privately to your library.",
 
     // Library
@@ -116,12 +116,12 @@ export const translations = {
     submitMcpServer: "+ Submit MCP Server",
 
     // Server detail
-    backToMcpHub: "← Back to MCPHub",
+    backToMcpHub: "← Back to Codestack",
     verifiedBadge: "✓ Verified",
     featuredBadge: "★ Featured",
-    installWithCli: "Install with MCPHub CLI",
+    installWithCli: "Install with Codestack CLI",
     installAutoDesc: "Automatically installs and configures in Claude Code, Cursor and Continue.",
-    getCli: "Get MCPHub CLI →",
+    getCli: "Get Codestack CLI →",
     manualInstall: "Manual Install",
     requiredEnvVars: "Required Environment Variables",
     required: "required",
@@ -136,7 +136,7 @@ export const translations = {
     allSkillsBack: "← All skills",
     whatHappensInstall: "What happens when you install it",
     skillStep1Title: "You run the install command",
-    skillStep1Desc: "MCPHub CLI downloads this prompt from the registry.",
+    skillStep1Desc: "Codestack CLI downloads this prompt from the registry.",
     skillStep2Title: "Saved as a file in Claude Code",
     skillStep2Desc: "Claude Code reads all .md files in this folder as slash commands.",
     skillStep3Title: "Use it in any conversation",
@@ -174,7 +174,7 @@ export const translations = {
     installSidebar: "Install",
 
     // Footer
-    footer: "MCPHub — Open source. Built for the MCP community.",
+    footer: "Codestack — Open source. Built for the MCP community.",
 
     // Common
     by: "by",
@@ -281,7 +281,7 @@ export const translations = {
     createTeam: "Crear equipo →",
 
     // Submit
-    submitTitle: "Publicar en MCPHub",
+    submitTitle: "Publicar en Codestack",
     submitDesc: "Comparte un servidor MCP, una skill o un agente con la comunidad — o guárdalo de forma privada en tu biblioteca.",
 
     // Library
@@ -299,12 +299,12 @@ export const translations = {
     submitMcpServer: "+ Publicar servidor MCP",
 
     // Server detail
-    backToMcpHub: "← Volver a MCPHub",
+    backToMcpHub: "← Volver a Codestack",
     verifiedBadge: "✓ Verificado",
     featuredBadge: "★ Destacado",
-    installWithCli: "Instalar con MCPHub CLI",
+    installWithCli: "Instalar con Codestack CLI",
     installAutoDesc: "Instala y configura automáticamente en Claude Code, Cursor y Continue.",
-    getCli: "Obtener MCPHub CLI →",
+    getCli: "Obtener Codestack CLI →",
     manualInstall: "Instalación manual",
     requiredEnvVars: "Variables de entorno requeridas",
     required: "requerida",
@@ -319,7 +319,7 @@ export const translations = {
     allSkillsBack: "← Todas las skills",
     whatHappensInstall: "Qué ocurre al instalarla",
     skillStep1Title: "Ejecutas el comando de instalación",
-    skillStep1Desc: "MCPHub CLI descarga este prompt del registro.",
+    skillStep1Desc: "Codestack CLI descarga este prompt del registro.",
     skillStep2Title: "Se guarda como archivo en Claude Code",
     skillStep2Desc: "Claude Code lee todos los archivos .md de esta carpeta como slash commands.",
     skillStep3Title: "Úsalo en cualquier conversación",
@@ -357,7 +357,7 @@ export const translations = {
     installSidebar: "Instalar",
 
     // Footer
-    footer: "MCPHub — Código abierto. Construido para la comunidad MCP.",
+    footer: "Codestack — Código abierto. Construido para la comunidad MCP.",
 
     // Common
     by: "por",

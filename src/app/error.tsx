@@ -45,7 +45,7 @@ export default function GlobalError({
           href="/"
           className="inline-flex items-center gap-2 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white font-medium px-6 py-3 rounded-xl transition-colors"
         >
-          ← Back to MCPHub
+          ← Back to Codestack
         </a>
       </div>
     </div>

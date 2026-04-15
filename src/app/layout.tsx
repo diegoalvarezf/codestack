@@ -8,8 +8,8 @@ import { getT } from "@/lib/i18n";
 import { IconHexagon } from "@/components/Icons";
 
 export const metadata: Metadata = {
-  title: "MCPHub — Discover and install Model Context Protocol servers",
-  description: "The open hub for MCP servers. Find, install, and manage servers for Claude Code, Cursor, Continue, and more.",
+  title: "Codestack — Install your full AI dev environment in one command",
+  description: "Discover and install stacks, MCP servers, skills, and agents for Claude Code, Cursor, Continue, and more.",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -30,18 +30,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <nav className="border-b border-gray-800 px-4 sm:px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
             <IconHexagon size={20} className="text-blue-400" />
-            <span>MCPHub</span>
+            <span>Codestack</span>
           </a>
           <div className="flex items-center gap-3 sm:gap-6 text-sm text-gray-400">
             <a href="/stacks" className="hover:text-white transition-colors hidden sm:block">{t.stacks}</a>
-            <a href="/run-local" className="hover:text-white transition-colors hidden sm:block">Run Local</a>
             <a href="/audits" className="hover:text-white transition-colors hidden md:block text-sm">Audits</a>
             <a href="/docs" className="hover:text-white transition-colors hidden md:block text-sm">API</a>
             <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">{t.cli}</a>
             <NavProfile user={session?.user ?? null} />
             <MobileMenu links={[
               { label: t.stacks, href: "/stacks" },
-              { label: "Run Local", href: "/run-local" },
               { label: "Audits", href: "/audits" },
               { label: "API", href: "/docs" },
               { label: t.cli, href: "/install-cli" },
@@ -53,7 +51,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <p>{t.footer}</p>
           <div className="flex items-center justify-center gap-6 mt-3 text-xs text-gray-600">
             <a href="/docs" className="hover:text-gray-400 transition-colors">API</a>
-            <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">MCP Docs ↗</a>
             <a href="/audits" className="hover:text-gray-400 transition-colors">Audits</a>
           </div>
         </footer>

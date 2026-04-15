@@ -17,10 +17,10 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const curated = getStack(params.slug);
-  if (curated) return { title: `${curated.name} Stack — MCPHub`, description: curated.description };
+  if (curated) return { title: `${curated.name} Stack — Codestack`, description: curated.description };
   const user = await prisma.userStack.findUnique({ where: { slug: params.slug } });
   if (!user) return {};
-  return { title: `${user.name} Stack — MCPHub`, description: user.description ?? undefined };
+  return { title: `${user.name} Stack — Codestack`, description: user.description ?? undefined };
 }
 
 export const dynamic = "force-dynamic";
@@ -164,7 +164,7 @@ export default async function StackPage({ params }: { params: { slug: string } }
           </div>
           <p className="text-xs text-gray-600">
             Installs all {totalItems} items · Requires{" "}
-            <span className="font-mono">npm install -g @diegoalvarezf/mcphub</span>
+            <span className="font-mono">npm install -g @diegoalvarezf/codestack</span>
           </p>
         </div>
       )}
@@ -219,7 +219,7 @@ export default async function StackPage({ params }: { params: { slug: string } }
             <h3 className="font-semibold text-white mb-1">{t.shareStackTitle}</h3>
             <p className="text-sm text-gray-400">{t.shareStackDesc}</p>
           </div>
-          <CopyButton text={`https://mcphub.dev/stacks/${stackSlug}`} />
+          <CopyButton text={`https://codestack.dev/stacks/${stackSlug}`} />
         </div>
       )}
     </div>
