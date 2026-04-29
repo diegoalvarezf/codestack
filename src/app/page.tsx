@@ -171,10 +171,7 @@ export default async function HomePage({
       )}
       {session && libraryStats && libraryStats.total === 0 && (
         <div className="mb-8 flex items-center justify-between px-4 py-3 bg-gray-900 border border-dashed border-gray-700 rounded-xl">
-          <div className="flex items-center gap-3">
-            <span className="text-lg">📚</span>
-            <p className="text-sm text-gray-400">Start building your library — save MCPs, skills, and agents.</p>
-          </div>
+          <p className="text-sm text-gray-400">Start building your library — save MCPs, skills, and agents.</p>
           <a href="/library" className="text-sm text-blue-400 hover:text-blue-300 transition-colors whitespace-nowrap">
             Go to Library →
           </a>
