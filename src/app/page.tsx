@@ -11,6 +11,7 @@ import { getT } from "@/lib/i18n";
 import type { SortMode } from "@/lib/servers";
 import { IconGrid, IconList, IconStar, IconDownload } from "@/components/Icons";
 import { CliCommand } from "@/components/CliCommand";
+import { prisma } from "@/lib/db";
 import { HeroBanner } from "@/components/HeroBanner";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +44,15 @@ export default async function HomePage({
     { id: "hot",      label: t.sortHot },
     { id: "new",      label: t.sortNew },
   ];
+
+  const libraryStats = session ? await (async () => {
+    const [createdServers, createdSkills, savedItems] = await Promise.all([
+      prisma.server.count({ where: { createdBy: session.user.githubLogin! } }),
+      prisma.skill.count({ where: { createdBy: session.user.githubLogin! } }),
+      (prisma as any).userSavedItem.count({ where: { userId: session.user.id ?? "" } }),
+    ]);
+    return { total: createdServers + createdSkills + savedItems };
+  })() : null;
 
   const section: Section = (searchParams.section as Section) ?? "mcps";
   const query = searchParams.q;
@@ -144,7 +154,32 @@ export default async function HomePage({
       )}
 
       {/* 3-way switch */}
-      <HeroBanner isLoggedIn={!!session} />
+      {!session && <HeroBanner isLoggedIn={false} />}
+      {session && libraryStats && libraryStats.total > 0 && (
+        <div className="mb-8 flex items-center justify-between px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl">
+          <div className="flex items-center gap-3">
+            <span className="text-lg">📚</span>
+            <div>
+              <p className="text-sm font-medium text-white">Your Library</p>
+              <p className="text-xs text-gray-500">{libraryStats.total} item{libraryStats.total !== 1 ? "s" : ""} saved</p>
+            </div>
+          </div>
+          <a href="/library" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+            View →
+          </a>
+        </div>
+      )}
+      {session && libraryStats && libraryStats.total === 0 && (
+        <div className="mb-8 flex items-center justify-between px-4 py-3 bg-gray-900 border border-dashed border-gray-700 rounded-xl">
+          <div className="flex items-center gap-3">
+            <span className="text-lg">📚</span>
+            <p className="text-sm text-gray-400">Start building your library — save MCPs, skills, and agents.</p>
+          </div>
+          <a href="/library" className="text-sm text-blue-400 hover:text-blue-300 transition-colors whitespace-nowrap">
+            Go to Library →
+          </a>
+        </div>
+      )}
       <div className="flex items-center justify-center mb-8">
         <div className="inline-flex bg-gray-900 border border-gray-800 rounded-xl p-1 gap-1">
           {SECTIONS.map(({ id, label, color }) => {

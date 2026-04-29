@@ -84,17 +84,14 @@ export default async function LibraryPage() {
           <p className="text-gray-400 text-sm">Your MCPs, skills, and agents — created or saved from the registry.</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <a
-            href="/library/add"
-            className="px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-sm text-blue-300 transition-colors"
-          >
-            + Add MCP
+          <a href="/library/add" className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-sm text-gray-300 transition-colors flex items-center gap-1.5">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add external
           </a>
-          <a
-            href="/submit"
-            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-sm text-white transition-colors"
-          >
-            Submit to registry
+          <a href="/" className="px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-sm text-blue-300 transition-colors">
+            Browse registry →
           </a>
         </div>
       </div>

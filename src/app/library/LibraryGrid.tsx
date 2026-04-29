@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ServerCard } from "@/components/ServerCard";
 import { SkillCard } from "@/components/SkillCard";
 import { AgentCard } from "@/components/AgentCard";
+import { AddToStack } from "./AddToStack";
 import type { McpServer } from "@/lib/types";
 import type { Skill } from "@prisma/client";
 
@@ -15,7 +16,7 @@ interface LibraryGridProps {
   stacks: { slug: string; name: string; icon: string; items: { itemSlug: string }[] }[];
 }
 
-export function LibraryGrid({ servers, skills, agents }: LibraryGridProps) {
+export function LibraryGrid({ servers, skills, agents, stacks }: LibraryGridProps) {
   const [filter, setFilter] = useState<FilterTab>("all");
 
   const tabs: { id: FilterTab; label: string; count: number; color: string }[] = [
@@ -77,10 +78,21 @@ export function LibraryGrid({ servers, skills, agents }: LibraryGridProps) {
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {servers.map((s) => (
-              <ServerCard key={s.id} server={s} savedInLibrary={s.savedInLibrary} />
+              <div key={s.id} className="relative group">
+                <ServerCard server={s} savedInLibrary={s.savedInLibrary} />
+                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <AddToStack itemSlug={s.slug} type="server" stacks={stacks} />
+                </div>
+              </div>
             ))}
           </div>
         </section>
+      )}
+      {showServers && servers.length === 0 && filter === "mcps" && (
+        <div className="text-center py-12 text-gray-600">
+          <p className="mb-3">No MCPs in your library yet.</p>
+          <a href="/?section=mcps" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">Browse MCPs →</a>
+        </div>
       )}
 
       {/* Skills */}
@@ -93,10 +105,21 @@ export function LibraryGrid({ servers, skills, agents }: LibraryGridProps) {
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {skills.map((s) => (
-              <SkillCard key={s.id} skill={s as any} savedInLibrary={s.savedInLibrary} />
+              <div key={s.id} className="relative group">
+                <SkillCard skill={s as any} savedInLibrary={s.savedInLibrary} />
+                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <AddToStack itemSlug={s.slug} type="skill" stacks={stacks} />
+                </div>
+              </div>
             ))}
           </div>
         </section>
+      )}
+      {showSkills && skills.length === 0 && filter === "skills" && (
+        <div className="text-center py-12 text-gray-600">
+          <p className="mb-3">No Skills in your library yet.</p>
+          <a href="/?section=skills" className="text-sm text-purple-400 hover:text-purple-300 transition-colors">Browse Skills →</a>
+        </div>
       )}
 
       {/* Agents */}
@@ -109,10 +132,21 @@ export function LibraryGrid({ servers, skills, agents }: LibraryGridProps) {
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {agents.map((s) => (
-              <AgentCard key={s.id} skill={s as any} savedInLibrary={s.savedInLibrary} />
+              <div key={s.id} className="relative group">
+                <AgentCard skill={s as any} savedInLibrary={s.savedInLibrary} />
+                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <AddToStack itemSlug={s.slug} type="agent" stacks={stacks} />
+                </div>
+              </div>
             ))}
           </div>
         </section>
+      )}
+      {showAgents && agents.length === 0 && filter === "agents" && (
+        <div className="text-center py-12 text-gray-600">
+          <p className="mb-3">No Agents in your library yet.</p>
+          <a href="/?section=agents" className="text-sm text-orange-400 hover:text-orange-300 transition-colors">Browse Agents →</a>
+        </div>
       )}
     </div>
   );

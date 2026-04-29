@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { NavProfile } from "@/components/NavProfile";
 import { MobileMenu } from "@/components/MobileMenu";
 import { getT } from "@/lib/i18n";
+import { Toaster } from "@/components/Toaster";
 import { IconHexagon } from "@/components/Icons";
 
 export const metadata: Metadata = {
@@ -33,9 +34,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <span>Codestack</span>
           </a>
           <div className="flex items-center gap-3 sm:gap-6 text-sm text-gray-400">
+            {session && (
+              <a href="/library" className="hover:text-white transition-colors hidden sm:block text-sm">Library</a>
+            )}
             <a href="/stacks" className="hover:text-white transition-colors hidden sm:block">{t.stacks}</a>
-            <a href="/audits" className="hover:text-white transition-colors hidden md:block text-sm">Audits</a>
-            <a href="/docs" className="hover:text-white transition-colors hidden md:block text-sm">API</a>
             <a href="/install-cli" className="hover:text-white transition-colors hidden sm:block">{t.cli}</a>
             <NavProfile user={session?.user ?? null} />
             <MobileMenu links={[
@@ -54,6 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <a href="/audits" className="hover:text-gray-400 transition-colors">Audits</a>
           </div>
         </footer>
+        <Toaster />
       </body>
     </html>
   );

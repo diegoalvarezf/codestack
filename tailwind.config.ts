@@ -7,11 +7,16 @@ const config: Config = {
     extend: {
       animation: {
         marquee: "marquee 28s linear infinite",
+        slideUp: "slideUp 0.2s ease-out",
       },
       keyframes: {
         marquee: {
           "0%":   { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
+        },
+        slideUp: {
+          from: { opacity: "0", transform: "translateY(12px)" },
+          to:   { opacity: "1", transform: "translateY(0)" },
         },
       },
       fontFamily: {

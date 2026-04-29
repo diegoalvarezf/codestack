@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/lib/toast";
 
 interface SaveButtonProps {
   type: "server" | "skill" | "agent";
@@ -35,7 +36,11 @@ export function SaveButton({ type, itemSlug, initialSaved, size = "sm" }: SaveBu
         router.push("/auth/signin");
         return;
       }
-      if (res.ok) setSaved(!saved);
+      if (res.ok) {
+        setSaved(!saved);
+        if (!saved) toast("Saved to library");
+        else toast("Removed from library", "info");
+      }
     } finally {
       setLoading(false);
     }
