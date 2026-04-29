@@ -124,26 +124,32 @@ export default async function HomePage({
       {/* Hero */}
       {!isFiltered && (
         <div className="text-center mb-10 sm:mb-12">
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4 tracking-tight">
-            {t.heroTitle}
-          </h1>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+          {/* ASCII logo */}
+          <pre
+            className="font-mono text-[3.5px] sm:text-[5.5px] md:text-[8px] lg:text-[10px] leading-none mb-6 text-blue-400/60 select-none overflow-x-hidden"
+            aria-hidden="true"
+          >{`  ██████╗   ██████╗   ██████╗   ███████╗ ███████╗ ████████╗  █████╗    ██████╗  ██╗  ██╗
+ ██╔════╝  ██╔═══██╗  ██╔══██╗  ██╔════╝ ██╔════╝ ╚══██╔══╝ ██╔══██╗  ██╔════╝  ██║ ██╔╝
+ ██║       ██║   ██║  ██║  ██║  █████╗   ███████╗    ██║    ███████║  ██║       █████╔╝ 
+ ██║       ██║   ██║  ██║  ██║  ██╔══╝   ╚════██║    ██║    ██╔══██║  ██║       ██╔═██╗ 
+ ╚██████╗  ╚██████╔╝  ██████╔╝  ███████╗ ███████║    ██║    ██║  ██║  ╚██████╗  ██║  ██╗
+  ╚═════╝   ╚═════╝   ╚═════╝   ╚══════╝ ╚══════╝    ╚═╝    ╚═╝  ╚═╝   ╚═════╝  ╚═╝  ╚═╝`}</pre>
+
+          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto mb-6">
             {t.heroDesc}
           </p>
-          <div className="mt-6 flex flex-col items-center gap-2">
+
+          <div className="flex flex-col items-center gap-2">
             <CliCommand />
-            <p className="text-xs text-gray-600">auto-installs to Claude Code, GitHub Copilot, Codex — whatever you have</p>
+            <p className="text-xs text-gray-600 font-mono">auto-installs to Claude Code, GitHub Copilot, Codex — whatever you have</p>
           </div>
 
           {/* Compatible clients — scrolling ticker */}
           <div className="mt-10 relative overflow-hidden" style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
-            <p className="text-xs text-gray-600 uppercase tracking-widest mb-4 text-center">Works with</p>
+            <p className="text-xs text-gray-600 uppercase tracking-widest mb-4 text-center font-mono">Works with</p>
             <div className="flex gap-6 animate-marquee whitespace-nowrap">
               {[...CLIENTS, ...CLIENTS].map((name, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center gap-2 text-sm text-gray-500"
-                >
+                <span key={i} className="inline-flex items-center gap-2 text-sm text-gray-500 font-mono">
                   <span className="w-1 h-1 rounded-full bg-gray-700 inline-block" />
                   {name}
                 </span>
@@ -177,6 +183,28 @@ export default async function HomePage({
           </a>
         </div>
       )}
+      {/* How it works — anon users only */}
+      {!session && !isFiltered && (
+        <div className="mb-10 border-t border-gray-800 pt-8">
+          <p className="text-xs text-gray-600 uppercase tracking-widest mb-6 text-center font-mono">How it works</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto font-mono">
+            {[
+              { n: "[1]", title: "Save what you use", desc: "Add MCPs, skills, and agents from the registry or paste any URL." },
+              { n: "[2]", title: "Build your stack", desc: "Group your tools into a named stack for each project or workflow." },
+              { n: "[3]", title: "Install everything", desc: "Run codestack install and your full AI setup is configured in seconds." },
+            ].map(({ n, title, desc }) => (
+              <div key={n} className="flex gap-3 text-left">
+                <span className="text-gray-600 shrink-0 text-sm">{n}</span>
+                <div>
+                  <p className="text-gray-200 text-sm">{title}</p>
+                  <p className="text-gray-500 text-sm mt-1">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-center mb-8">
         <div className="inline-flex bg-gray-900 border border-gray-800 rounded-xl p-1 gap-1">
           {SECTIONS.map(({ id, label, color }) => {

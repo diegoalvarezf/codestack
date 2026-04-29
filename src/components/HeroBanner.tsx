@@ -8,18 +8,17 @@ export function HeroBanner({ isLoggedIn }: HeroBannerProps) {
   if (isLoggedIn) return null;
 
   return (
-    <div className="mb-8 rounded-2xl border border-blue-500/10 bg-gradient-to-r from-blue-500/5 to-transparent p-6 flex items-center justify-between gap-6">
-      <div>
-        <h2 className="text-lg font-bold text-white mb-1">Your AI Dev Stack, organized.</h2>
-        <p className="text-sm text-gray-400">
-          Save MCPs, agents &amp; skills for Claude Code, Codex, GitHub Copilot and more. Build stacks. Install everything with one command.
-        </p>
-      </div>
+    <div className="mb-8 border border-gray-800 bg-gray-950 p-5 font-mono">
+      <p className="text-xs text-gray-600 uppercase tracking-widest mb-3">Get started</p>
+      <p className="text-gray-300 text-sm mb-4">
+        Build your personal library of MCPs, skills, and agents.{" "}
+        <span className="text-gray-500">Install your full stack with one command.</span>
+      </p>
       <a
         href="/auth/signin?callbackUrl=/library"
-        className="shrink-0 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium text-white transition-colors whitespace-nowrap"
+        className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
       >
-        Start your library →
+        <span className="text-gray-600">$</span> sign in to start →
       </a>
     </div>
   );
