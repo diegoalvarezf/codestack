@@ -91,6 +91,7 @@ model User {
   createdAt   DateTime     @default(now())
   teamMembers TeamMember[]
   skills      Skill[]
+  savedItems  UserSavedItem[]
 }
 
 model Team {
@@ -163,4 +164,15 @@ model UserStackItem {
   order     Int       @default(0)
 
   @@unique([stackId, itemSlug])
+}
+
+model UserSavedItem {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type     String   // "server" | "skill" | "agent"
+  itemSlug String
+  addedAt  DateTime @default(now())
+
+  @@unique([userId, type, itemSlug])
 }

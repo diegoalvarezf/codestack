@@ -4,6 +4,7 @@ import type { Skill } from "@prisma/client";
 import { parseTags } from "@/lib/skills-db";
 import { useT } from "@/lib/use-t";
 import { IconCheck, IconDownload, IconStar } from "@/components/Icons";
+import { SaveButton } from "@/components/SaveButton";
 
 function getGithubAvatar(authorUrl?: string | null): string | null {
   if (!authorUrl) return null;
@@ -11,7 +12,7 @@ function getGithubAvatar(authorUrl?: string | null): string | null {
   return match ? `https://github.com/${match[1]}.png?size=40` : null;
 }
 
-export function SkillCard({ skill, featured }: { skill: Skill; featured?: boolean }) {
+export function SkillCard({ skill, featured, savedInLibrary }: { skill: Skill; featured?: boolean; savedInLibrary?: boolean }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
   const tags = parseTags(skill);
@@ -52,13 +53,23 @@ export function SkillCard({ skill, featured }: { skill: Skill; featured?: boolea
               <span title="Verified" className="text-purple-400 shrink-0"><IconCheck size={12} /></span>
             )}
           </div>
-          <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ml-2 ${
-            skill.type === "agent"
-              ? "bg-orange-500/10 border-orange-500/20 text-orange-400"
-              : "bg-purple-500/10 border-purple-500/20 text-purple-400"
-          }`}>
-            {skill.type}
-          </span>
+          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+            <span className={`text-xs px-2 py-0.5 rounded-full border ${
+              skill.type === "agent"
+                ? "bg-orange-500/10 border-orange-500/20 text-orange-400"
+                : "bg-purple-500/10 border-purple-500/20 text-purple-400"
+            }`}>
+              {skill.type}
+            </span>
+            {savedInLibrary !== undefined && (
+              <SaveButton
+                type={skill.type === "agent" ? "agent" : "skill"}
+                itemSlug={skill.slug}
+                initialSaved={savedInLibrary}
+                size="sm"
+              />
+            )}
+          </div>
         </div>
 
         {/* Description */}

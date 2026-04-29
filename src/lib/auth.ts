@@ -32,9 +32,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.sub) {
         const user = await prisma.user.findUnique({
           where: { githubId: token.sub },
-          select: { githubLogin: true, role: true, avatarUrl: true },
+          select: { id: true, githubLogin: true, role: true, avatarUrl: true },
         });
         if (user) {
+          session.user.id = user.id;
           session.user.githubLogin = user.githubLogin;
           session.user.role = user.role;
           session.user.image = user.avatarUrl ?? session.user.image;
@@ -55,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 declare module "next-auth" {
   interface Session {
     user: {
+      id?: string;
       name?: string | null;
       email?: string | null;
       image?: string | null;

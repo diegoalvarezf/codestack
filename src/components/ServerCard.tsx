@@ -6,6 +6,7 @@ import {
   IconCheck, IconShieldCheck, IconShieldQuestion, IconShieldAlert,
   IconStar, IconDownload, IconVSCode,
 } from "@/components/Icons";
+import { SaveButton } from "@/components/SaveButton";
 
 function getGithubAvatar(repoUrl: string, authorUrl?: string | null): string | null {
   for (const url of [authorUrl, repoUrl]) {
@@ -45,7 +46,7 @@ function RiskIcon({ level }: { level: string }) {
   return <IconShieldAlert size={12} />;
 }
 
-export function ServerCard({ server, featured, rank }: { server: McpServer; featured?: boolean; rank?: number }) {
+export function ServerCard({ server, featured, rank, savedInLibrary }: { server: McpServer; featured?: boolean; rank?: number; savedInLibrary?: boolean }) {
   const t = useT();
   const avatar = getGithubAvatar(server.repoUrl, server.authorUrl);
   const [copied, setCopied] = useState(false);
@@ -106,6 +107,9 @@ export function ServerCard({ server, featured, rank }: { server: McpServer; feat
             <span className={`flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded border ${riskStyle}`} title={`Security: ${riskLabel}`}>
               <RiskIcon level={server.riskLevel} />
             </span>
+            {savedInLibrary !== undefined && (
+              <SaveButton type="server" itemSlug={server.slug} initialSaved={savedInLibrary} size="sm" />
+            )}
           </div>
         </div>
 

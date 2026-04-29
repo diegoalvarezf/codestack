@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { auth } from "@/lib/auth";
 import { getServers } from "@/lib/servers";
 import { getSkills } from "@/lib/skills-db";
 import { ServerCard } from "@/components/ServerCard";
@@ -10,6 +11,7 @@ import { getT } from "@/lib/i18n";
 import type { SortMode } from "@/lib/servers";
 import { IconGrid, IconList, IconStar, IconDownload } from "@/components/Icons";
 import { CliCommand } from "@/components/CliCommand";
+import { HeroBanner } from "@/components/HeroBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +27,8 @@ export default async function HomePage({
 }: {
   searchParams: { q?: string; tag?: string; client?: string; page?: string; section?: string; sort?: string; view?: string };
 }) {
-  const lang = (await cookies()).get("lang")?.value ?? "en";
+  const [cookieStore, session] = await Promise.all([cookies(), auth()]);
+  const lang = cookieStore.get("lang")?.value ?? "en";
   const t = getT(lang);
 
   const SECTIONS = [
@@ -141,6 +144,7 @@ export default async function HomePage({
       )}
 
       {/* 3-way switch */}
+      <HeroBanner isLoggedIn={!!session} />
       <div className="flex items-center justify-center mb-8">
         <div className="inline-flex bg-gray-900 border border-gray-800 rounded-xl p-1 gap-1">
           {SECTIONS.map(({ id, label, color }) => {
