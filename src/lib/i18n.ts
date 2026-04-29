@@ -19,8 +19,8 @@ export const translations = {
     language: "Language",
 
     // Home hero
-    heroTitle: "The hub for MCP servers, skills, and agents",
-    heroDesc: "Discover and install tools for Claude Code, Cursor, Continue, and more. Built by the community, for the community.",
+    heroTitle: "Your MCP stack for Claude Code, Codex & Copilot",
+    heroDesc: "Discover, save, and install MCP servers, skills, and agents for Claude Code, Codex, OpenCode, GitHub Copilot, and Cursor. One command to set it all up.",
     heroOr: "or",
     allCommands: "All commands →",
 
@@ -120,7 +120,7 @@ export const translations = {
     verifiedBadge: "✓ Verified",
     featuredBadge: "★ Featured",
     installWithCli: "Install with Codestack CLI",
-    installAutoDesc: "Automatically installs and configures in Claude Code, Cursor and Continue.",
+    installAutoDesc: "Automatically installs and configures in Claude Code, GitHub Copilot, Codex, and Cursor.",
     getCli: "Get Codestack CLI →",
     manualInstall: "Manual Install",
     requiredEnvVars: "Required Environment Variables",
@@ -202,8 +202,8 @@ export const translations = {
     language: "Idioma",
 
     // Home hero
-    heroTitle: "El hub de servidores MCP, skills y agentes",
-    heroDesc: "Descubre e instala herramientas para Claude Code, Cursor, Continue y más. Construido por la comunidad, para la comunidad.",
+    heroTitle: "Tu stack de MCPs para Claude Code, Codex y Copilot",
+    heroDesc: "Descubre, guarda e instala MCP servers, skills y agentes para Claude Code, Codex, OpenCode, GitHub Copilot y Cursor. Un comando para configurarlo todo.",
     heroOr: "o",
     allCommands: "Todos los comandos →",
 
@@ -303,7 +303,7 @@ export const translations = {
     verifiedBadge: "✓ Verificado",
     featuredBadge: "★ Destacado",
     installWithCli: "Instalar con Codestack CLI",
-    installAutoDesc: "Instala y configura automáticamente en Claude Code, Cursor y Continue.",
+    installAutoDesc: "Instala y configura automáticamente en Claude Code, GitHub Copilot, Codex y Cursor.",
     getCli: "Obtener Codestack CLI →",
     manualInstall: "Instalación manual",
     requiredEnvVars: "Variables de entorno requeridas",

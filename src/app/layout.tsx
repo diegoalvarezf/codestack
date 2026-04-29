@@ -10,7 +10,7 @@ import { IconHexagon } from "@/components/Icons";
 
 export const metadata: Metadata = {
   title: "Codestack — Install your full AI dev environment in one command",
-  description: "Discover and install stacks, MCP servers, skills, and agents for Claude Code, Cursor, Continue, and more.",
+  description: "Your personal MCP library for Claude Code, Codex, GitHub Copilot, OpenCode, and Cursor. Save servers, build stacks, install everything in one command.",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

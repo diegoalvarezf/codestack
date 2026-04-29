@@ -19,8 +19,8 @@ export const dynamic = "force-dynamic";
 type Section = "mcps" | "skills" | "agents";
 
 const CLIENTS = [
-  "Claude Code", "Claude Desktop", "Cursor", "Continue",
-  "OpenClaw", "Cline", "Copilot", "Windsurf", "Ollama", "Open WebUI", "Zed",
+  "Claude Code", "GitHub Copilot", "Codex", "OpenCode",
+  "Cursor", "Windsurf", "Cline", "Continue", "Zed", "Claude Desktop",
 ];
 
 export default async function HomePage({
@@ -132,7 +132,7 @@ export default async function HomePage({
           </p>
           <div className="mt-6 flex flex-col items-center gap-2">
             <CliCommand />
-            <p className="text-xs text-gray-600">auto-installs to Claude Code, Cursor, Continue — whatever you have</p>
+            <p className="text-xs text-gray-600">auto-installs to Claude Code, GitHub Copilot, Codex — whatever you have</p>
           </div>
 
           {/* Compatible clients — scrolling ticker */}
@@ -213,15 +213,24 @@ export default async function HomePage({
           {!isFiltered && (
             <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide justify-center">
               <div className="flex gap-2 flex-nowrap">
-                {["claude-code", "cursor", "continue"].map((c) => (
-                  <a key={c} href={buildUrl(1, { client: client === c ? "" : c })}
-                    className={`px-3 py-1.5 rounded-full text-sm border transition-colors whitespace-nowrap ${
-                      client === c ? "bg-blue-500 border-blue-500 text-white"
-                                   : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200"
-                    }`}>
-                    {c === "claude-code" ? "Claude Code" : c === "cursor" ? "Cursor" : "Continue"}
-                  </a>
-                ))}
+                {(["claude-code", "github-copilot", "codex", "opencode", "cursor"] as const).map((c) => {
+                  const labels: Record<string, string> = {
+                    "claude-code": "Claude Code",
+                    "github-copilot": "GitHub Copilot",
+                    "codex": "Codex",
+                    "opencode": "OpenCode",
+                    "cursor": "Cursor",
+                  };
+                  return (
+                    <a key={c} href={buildUrl(1, { client: client === c ? "" : c })}
+                      className={`px-3 py-1.5 rounded-full text-sm border transition-colors whitespace-nowrap ${
+                        client === c ? "bg-blue-500 border-blue-500 text-white"
+                                     : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200"
+                      }`}>
+                      {labels[c]}
+                    </a>
+                  );
+                })}
                 <div className="w-px bg-gray-800 mx-1" />
                 {["filesystem", "database", "search", "git", "browser", "memory", "api"].map((tg) => (
                   <a key={tg} href={buildUrl(1, { tag: tag === tg ? "" : tg })}

@@ -12,7 +12,7 @@ export function HeroBanner({ isLoggedIn }: HeroBannerProps) {
       <div>
         <h2 className="text-lg font-bold text-white mb-1">Your AI Dev Stack, organized.</h2>
         <p className="text-sm text-gray-400">
-          Save MCPs, agents &amp; skills. Build stacks. Install everything with one command.
+          Save MCPs, agents &amp; skills for Claude Code, Codex, GitHub Copilot and more. Build stacks. Install everything with one command.
         </p>
       </div>
       <a
