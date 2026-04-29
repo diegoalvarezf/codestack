@@ -126,7 +126,7 @@ export default async function HomePage({
         <div className="text-center mb-10 sm:mb-12">
           {/* ASCII logo */}
           <pre
-            className="font-mono text-[3.5px] sm:text-[5.5px] md:text-[8px] lg:text-[10px] leading-none mb-6 text-blue-400/60 select-none overflow-x-hidden"
+            className="font-mono text-[3.5px] sm:text-[5.5px] md:text-[8px] lg:text-[10px] leading-none mb-6 text-white/80 select-none overflow-x-hidden"
             aria-hidden="true"
           >{`  ██████╗   ██████╗   ██████╗   ███████╗ ███████╗ ████████╗  █████╗    ██████╗  ██╗  ██╗
  ██╔════╝  ██╔═══██╗  ██╔══██╗  ██╔════╝ ██╔════╝ ╚══██╔══╝ ██╔══██╗  ██╔════╝  ██║ ██╔╝
