@@ -8,7 +8,7 @@ export async function listCommand() {
 
   if (clients.length === 0) {
     console.log(chalk.yellow("No MCP client detected."));
-    console.log(chalk.gray("Supported: Claude Desktop, Claude Code, Cursor, Continue\n"));
+    console.log(chalk.gray("Supported: Claude Code, Claude Desktop, Cursor, Continue.dev, GitHub Copilot, OpenClaw\n"));
     return;
   }
 

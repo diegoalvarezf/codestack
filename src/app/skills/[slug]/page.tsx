@@ -30,7 +30,7 @@ export default async function SkillPage({ params }: { params: { slug: string } }
   const lang = cookieStore.get("lang")?.value ?? "en";
   const t = getT(lang);
   const tags = parseTags(skill);
-  const installCmd = `mcp install-skill ${skill.slug}`;
+  const installCmd = `codestack install-skill ${skill.slug}`;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
@@ -45,7 +45,7 @@ export default async function SkillPage({ params }: { params: { slug: string } }
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xs px-2.5 py-1 rounded-full border bg-purple-500/10 border-purple-500/20 text-purple-400 font-medium">
-                Prompt · Slash command
+                Skill · Agent Skills format
               </span>
               {skill.verified && (
                 <span className="text-xs text-purple-400 border border-purple-500/20 bg-purple-500/10 px-2.5 py-1 rounded-full">{t.verifiedBadge}</span>
@@ -73,7 +73,7 @@ export default async function SkillPage({ params }: { params: { slug: string } }
                 <div className="w-8 h-8 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold shrink-0">2</div>
                 <div>
                   <p className="text-sm text-white font-medium mb-1">{t.skillStep2Title}</p>
-                  <code className="text-xs bg-gray-800 px-2 py-1 rounded font-mono text-gray-300">~/.claude/commands/{skill.slug}.md</code>
+                  <code className="text-xs bg-gray-800 px-2 py-1 rounded font-mono text-gray-300">~/.claude/skills/{skill.slug}/SKILL.md</code>
                   <p className="text-xs text-gray-500 mt-1">{t.skillStep2Desc}</p>
                 </div>
               </div>

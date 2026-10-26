@@ -1,45 +1,12 @@
 import chalk from "chalk";
 import ora from "ora";
-import fs from "fs";
-import path from "path";
-import os from "os";
+import { REGISTRY_URL } from "../lib/api.js";
+import { installSkillFiles, toSkillName, type SkillLike } from "../lib/skills.js";
 
-const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://codestack-sigma.vercel.app";
-
-interface Skill {
-  slug: string;
-  name: string;
-  description: string;
-  type: string;
-  content: string;
-}
-
-async function fetchSkill(slug: string): Promise<Skill | null> {
+async function fetchSkill(slug: string): Promise<SkillLike | null> {
   const res = await fetch(`${REGISTRY_URL}/api/skills/${encodeURIComponent(slug)}`);
   if (!res.ok) return null;
-  return res.json() as Promise<Skill>;
-}
-
-function installPrompt(skill: Skill): string {
-  const commandsDir = path.join(os.homedir(), ".claude", "commands");
-  fs.mkdirSync(commandsDir, { recursive: true });
-
-  const filename = `${skill.slug}.md`;
-  const filepath = path.join(commandsDir, filename);
-  const header = `# ${skill.name}\n\n${skill.description}\n\n`;
-  fs.writeFileSync(filepath, header + skill.content, "utf8");
-  return filepath;
-}
-
-function installAgent(skill: Skill): string {
-  const agentsDir = path.join(os.homedir(), ".claude", "agents");
-  fs.mkdirSync(agentsDir, { recursive: true });
-
-  const filename = `${skill.slug}.md`;
-  const filepath = path.join(agentsDir, filename);
-  const frontmatter = `---\nname: ${skill.name}\ndescription: ${skill.description}\n---\n\n`;
-  fs.writeFileSync(filepath, frontmatter + skill.content, "utf8");
-  return filepath;
+  return res.json() as Promise<SkillLike>;
 }
 
 export async function installSkillCommand(slug: string) {
@@ -48,26 +15,24 @@ export async function installSkillCommand(slug: string) {
 
   if (!skill) {
     spinner.fail(`Skill ${chalk.bold(slug)} not found.`);
-    console.log(chalk.gray(`  Browse skills at https://codestack-sigma.vercel.app/skills`));
+    console.log(chalk.gray(`  Browse skills at ${REGISTRY_URL}/skills`));
     process.exit(1);
   }
 
-  spinner.succeed(`Found: ${chalk.bold(skill.name)} (${skill.type})`);
+  spinner.succeed(`Found: ${chalk.bold(skill.name)} (${skill.type === "agent" ? "agent" : "skill"})`);
 
   try {
-    let filepath: string;
+    const files = installSkillFiles(skill);
+    const name = toSkillName(skill.slug);
 
     if (skill.type === "agent") {
-      filepath = installAgent(skill);
       console.log(chalk.green(`✓ Agent installed`));
-      console.log(chalk.gray(`  ${filepath}`));
-      console.log(chalk.gray(`  Run with: claude --agent ${skill.slug}`));
+      console.log(chalk.gray(`  ${files[0]}`));
+      console.log(chalk.gray(`  Use it in Claude Code with: claude --agent ${name}\n`));
     } else {
-      filepath = installPrompt(skill);
-      console.log(chalk.green(`✓ Slash command installed`));
-      console.log(chalk.gray(`  ${filepath}`));
-      console.log(chalk.cyan(`  Use as: /${skill.slug} in Claude Code`));
-      console.log(chalk.gray(`  (restart Claude Code to activate)\n`));
+      console.log(chalk.green(`✓ Skill installed`));
+      for (const f of files) console.log(chalk.gray(`  ${f}`));
+      console.log(chalk.cyan(`  Use as /${name} in Claude Code; Codex, Copilot, Gemini CLI, OpenCode and Cursor load it too.\n`));
     }
   } catch (err: any) {
     console.error(chalk.red("Error:"), err.message);

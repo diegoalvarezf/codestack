@@ -21,7 +21,7 @@ function buildVSCodeUri(server: McpServer): string | null {
   if (!server.configJson) return null;
   try {
     const config = JSON.parse(server.configJson);
-    const payload = JSON.stringify({ name: server.slug, ...config });
+    const payload = JSON.stringify({ name: server.slug, ...(config.url ? { type: "http" } : {}), ...config });
     return `vscode:mcp/install?${encodeURIComponent(payload)}`;
   } catch {
     return null;
@@ -57,7 +57,7 @@ export function ServerCard({ server, featured, rank, savedInLibrary }: { server:
   function handleLocalInstall(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    navigator.clipboard.writeText(`mcp install ${server.slug}`).then(() => {
+    navigator.clipboard.writeText(`codestack install ${server.slug}`).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
@@ -161,7 +161,7 @@ export function ServerCard({ server, featured, rank, savedInLibrary }: { server:
       </a>
 
       {/* Install buttons */}
-      {server.installCmd && (
+      {(server.installCmd || server.configJson) && (
         <div className="px-4 sm:px-5 pb-4 pt-0 flex gap-2">
           {vscodeUri ? (
             <a

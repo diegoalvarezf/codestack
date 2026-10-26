@@ -72,7 +72,7 @@ export default async function AgentsPage({
             <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold">How it works</p>
             <div className="flex items-start gap-3 text-sm">
               <span className="text-orange-400 font-mono shrink-0 mt-0.5">1.</span>
-              <span className="text-gray-300">Install: <code className="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-green-400">mcp install-skill senior-engineer</code></span>
+              <span className="text-gray-300">Install: <code className="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-green-400">codestack install-skill senior-engineer</code></span>
             </div>
             <div className="flex items-start gap-3 text-sm">
               <span className="text-orange-400 font-mono shrink-0 mt-0.5">2.</span>

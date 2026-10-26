@@ -2,37 +2,41 @@ import type { Metadata } from "next";
 import { CopyButton } from "@/components/CopyButton";
 
 export const metadata: Metadata = {
-  title: "Install Codestack CLI — mcp install",
-  description: "Install MCP servers with one command across Claude Code, Cursor, and Continue.",
+  title: "Install Codestack CLI",
+  description: "Install MCP servers, skills and agents with one command across Claude Code, Codex, Copilot, Cursor and more.",
 };
 
 const commands = [
   {
-    cmd: "mcp install github",
-    desc: "Install an MCP server — auto-detects clients, asks for required env vars",
+    cmd: "codestack install github",
+    desc: "Install an MCP server (local or remote) — auto-detects clients, asks for required env vars",
   },
   {
-    cmd: "mcp install-skill review-pr",
-    desc: "Install a prompt as a /slash-command or an agent into Claude Code",
+    cmd: "codestack install-skill review-pr",
+    desc: "Install an Agent Skill (Claude Code, Codex, Copilot, Gemini CLI, OpenCode, Cursor) or a Claude Code agent",
   },
   {
-    cmd: "mcp install-stack full-stack-dev",
+    cmd: "codestack install-stack full-stack-dev",
     desc: "Install an entire stack — all servers, skills, and agents in one command",
   },
   {
-    cmd: "mcp remove github",
+    cmd: "codestack plugin full-stack-dev",
+    desc: "Install a stack as a Claude Code plugin from the Codestack marketplace",
+  },
+  {
+    cmd: "codestack remove github",
     desc: "Remove a server from one or all clients",
   },
   {
-    cmd: "mcp search database",
+    cmd: "codestack search database",
     desc: "Search servers in the Codestack registry",
   },
   {
-    cmd: "mcp list",
+    cmd: "codestack list",
     desc: "List all installed servers across every client",
   },
   {
-    cmd: "mcp sync --team my-team",
+    cmd: "codestack sync --team my-team",
     desc: "Install all servers + skills configured for your team",
   },
 ];
@@ -114,9 +118,9 @@ export default function InstallCliPage() {
             <div className="bg-gray-900/80 rounded-lg p-3 font-mono text-sm flex items-center justify-between gap-3">
               <span>
                 <span className="text-gray-500">$ </span>
-                <span className="text-blue-400">mcp sync --team acme-corp</span>
+                <span className="text-blue-400">codestack sync --team acme-corp</span>
               </span>
-              <CopyButton text="mcp sync --team acme-corp" />
+              <CopyButton text="codestack sync --team acme-corp" />
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-3">

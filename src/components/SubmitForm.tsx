@@ -116,7 +116,7 @@ export function SubmitForm() {
         name="installCmd"
         label="Install command"
         placeholder="npx -y @scope/my-mcp-server"
-        hint="The exact command to run the server (used by mcp install)"
+        hint="The exact command to run the server (used by codestack install)"
       />
 
       {/* Category */}

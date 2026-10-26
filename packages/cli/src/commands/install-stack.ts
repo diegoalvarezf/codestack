@@ -2,8 +2,8 @@ import chalk from "chalk";
 import ora from "ora";
 import { installCommand } from "./install.js";
 import { installSkillCommand } from "./install-skill.js";
+import { REGISTRY_URL } from "../lib/api.js";
 
-const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://codestack-sigma.vercel.app";
 
 interface StackResponse {
   slug: string;
@@ -58,4 +58,5 @@ export async function installStackCommand(slug: string) {
   }
 
   console.log(chalk.green.bold(`✓ Stack "${stack.name}" installed`));
+  console.log(chalk.gray(`  Using Claude Code? Install it as a plugin instead: codestack plugin ${stack.slug}\n`));
 }

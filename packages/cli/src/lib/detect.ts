@@ -71,7 +71,7 @@ export function detectClients(): DetectedClient[] {
 }
 
 export function getDefaultConfigPath(clientId: ClientId): string {
-  const paths = CLIENT_CONFIG_PATHS[clientId];
-  // Devuelve la primera ruta (la principal) aunque no exista aún
-  return expand(paths[0]);
+  const paths = CLIENT_CONFIG_PATHS[clientId].map(expand);
+  // The config file that exists on this machine; otherwise the main one
+  return paths.find((p) => fs.existsSync(p)) ?? paths[0];
 }

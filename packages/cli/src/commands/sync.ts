@@ -1,20 +1,16 @@
 import chalk from "chalk";
 import ora from "ora";
 import inquirer from "inquirer";
-import fs from "fs";
-import path from "path";
-import os from "os";
 import { detectClients, type DetectedClient } from "../lib/detect.js";
-import { installForClient, isAlreadyInstalled } from "../lib/config.js";
-import type { McpServer } from "../lib/api.js";
-
-const REGISTRY_URL = process.env.MCPHUB_REGISTRY ?? "https://codestack-sigma.vercel.app";
+import { installForClient, isAlreadyInstalled, isRemoteServer, remoteUnsupportedReason } from "../lib/config.js";
+import { REGISTRY_URL, type McpServer } from "../lib/api.js";
+import { installSkillFiles, toSkillName } from "../lib/skills.js";
 
 interface TeamSkill {
   id: string;
   slug: string;
   name: string;
-  type: string; // "prompt" | "agent"
+  type: string; // "prompt" | "skill" | "agent"
   description?: string;
   content: string;
 }
@@ -33,24 +29,9 @@ async function fetchTeam(teamSlug: string, token: string): Promise<SyncResponse 
   return res.json() as Promise<SyncResponse>;
 }
 
-function installSkills(teamSlug: string, skills: TeamSkill[]): void {
-  if (skills.length === 0) return;
-
-  const commandsDir = path.join(os.homedir(), ".claude", "commands");
-  fs.mkdirSync(commandsDir, { recursive: true });
-
-  for (const skill of skills) {
-    if (skill.type !== "prompt") continue;
-    const filename = `${teamSlug}-${skill.slug}.md`;
-    const filepath = path.join(commandsDir, filename);
-    const header = skill.description ? `# ${skill.name}\n\n${skill.description}\n\n` : `# ${skill.name}\n\n`;
-    fs.writeFileSync(filepath, header + skill.content, "utf8");
-  }
-}
-
 export async function syncCommand(teamSlug?: string, tokenFlag?: string) {
   if (!teamSlug) {
-    console.log(chalk.red("Usage: mcp sync --team <slug> --token <token>"));
+    console.log(chalk.red("Usage: codestack sync --team <slug> --token <token>"));
     console.log(chalk.gray("  Get the sync command from your team page on Codestack."));
     process.exit(1);
   }
@@ -81,15 +62,18 @@ export async function syncCommand(teamSlug?: string, tokenFlag?: string) {
     `Team ${chalk.bold(data.team.name)} — ${data.servers.length} server${data.servers.length !== 1 ? "s" : ""}, ${data.skills.length} skill${data.skills.length !== 1 ? "s" : ""}`
   );
 
-  // ── Skills ────────────────────────────────────────────────────────────────
-  const prompts = data.skills.filter((s) => s.type === "prompt");
+  // ── Skills and agents ─────────────────────────────────────────────────────
+  // Team skills are prefixed with the team slug to avoid clashing with personal ones.
+  const prompts = data.skills;
   if (prompts.length > 0) {
-    const s = ora(`  Installing ${prompts.length} slash command${prompts.length !== 1 ? "s" : ""}...`).start();
+    const s = ora(`  Installing ${prompts.length} skill${prompts.length !== 1 ? "s" : ""}...`).start();
     try {
-      installSkills(teamSlug, prompts);
-      s.succeed(
-        `  ${chalk.bold("Skills")} ${chalk.gray(`→ ~/.claude/commands/`)} ${prompts.map((p) => chalk.cyan(`/${teamSlug}-${p.slug}`)).join(", ")}`
-      );
+      const names = prompts.map((p) => {
+        const name = toSkillName(`${teamSlug}-${p.slug}`);
+        installSkillFiles(p, name);
+        return p.type === "agent" ? chalk.yellow(name) : chalk.cyan(`/${name}`);
+      });
+      s.succeed(`  ${chalk.bold("Skills")} ${chalk.gray("→ ~/.claude/skills, ~/.agents/skills, ~/.claude/agents")} ${names.join(", ")}`);
     } catch (err: any) {
       s.fail(`  Skills: ${err.message}`);
     }
@@ -99,7 +83,7 @@ export async function syncCommand(teamSlug?: string, tokenFlag?: string) {
   if (data.servers.length === 0) {
     if (prompts.length > 0) {
       console.log(chalk.green(`\n✓ Synced team ${chalk.bold(data.team.name)}`));
-      console.log(chalk.gray("  Restart Claude Code to activate slash commands.\n"));
+      console.log(chalk.gray("  Restart your agent to load the new skills.\n"));
     } else {
       console.log(chalk.gray("\n  No servers or skills configured for this team."));
     }
@@ -147,9 +131,15 @@ export async function syncCommand(teamSlug?: string, tokenFlag?: string) {
       }
     }
 
+    const remoteUrl = isRemoteServer(server) && server.configJson ? (JSON.parse(server.configJson).url as string) : "";
     for (const client of targets) {
       const already = isAlreadyInstalled(client.id, server.slug);
       const s = ora(`    ${client.label}${already ? chalk.gray(" (updating)") : ""}`).start();
+      const skip = remoteUrl ? remoteUnsupportedReason(client.id, remoteUrl) : null;
+      if (skip) {
+        s.warn(`    ${chalk.bold(client.label)} ${chalk.gray(skip)}`);
+        continue;
+      }
       try {
         const p = installForClient(client.id, server, envValues);
         s.succeed(`    ${chalk.bold(client.label)} ${chalk.gray(`→ ${p}`)}`);
@@ -163,7 +153,7 @@ export async function syncCommand(teamSlug?: string, tokenFlag?: string) {
   console.log(chalk.green(`✓ Synced team ${chalk.bold(data.team.name)}`));
   console.log(chalk.gray("  Restart your MCP clients to activate servers."));
   if (prompts.length > 0) {
-    console.log(chalk.gray("  Restart Claude Code to activate slash commands.\n"));
+    console.log(chalk.gray("  Restart your agent to load the new skills.\n"));
   } else {
     console.log();
   }

@@ -30,7 +30,7 @@ export default async function AgentPage({ params }: { params: { slug: string } }
   const lang = cookieStore.get("lang")?.value ?? "en";
   const t = getT(lang);
   const tags = parseTags(skill);
-  const installCmd = `mcp install-skill ${skill.slug}`;
+  const installCmd = `codestack install-skill ${skill.slug}`;
   const runCmd = `claude --agent ${skill.slug} "your task here"`;
 
   return (

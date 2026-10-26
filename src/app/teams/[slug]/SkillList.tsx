@@ -73,8 +73,8 @@ export function SkillList({
               </pre>
               <p className="text-xs text-gray-600">
                 {skill.type === "prompt"
-                  ? `Synced to ~/.claude/commands/<team>-${skill.slug}.md — use as /<team>-${skill.slug} in Claude Code`
-                  : `Agent system prompt — synced via mcp sync`}
+                  ? `Synced to ~/.claude/skills/<team>-${skill.slug}/SKILL.md — use as /<team>-${skill.slug} in Claude Code`
+                  : `Agent system prompt — synced via codestack sync`}
               </p>
             </div>
           )}

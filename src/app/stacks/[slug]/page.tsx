@@ -71,6 +71,7 @@ export default async function StackPage({ params }: { params: { slug: string } }
   let stackIcon = "📦";
   let createdBy: string | null = null;
   let isCurated = false;
+  let isPublic = false;
   let stackSlug = params.slug;
 
   if (curated) {
@@ -81,6 +82,7 @@ export default async function StackPage({ params }: { params: { slug: string } }
     stackDescription = curated.description;
     stackIcon = curated.icon;
     isCurated = true;
+    isPublic = true;
   } else {
     const userStack = await prisma.userStack.findUnique({
       where: { slug: params.slug },
@@ -95,6 +97,7 @@ export default async function StackPage({ params }: { params: { slug: string } }
     stackIcon = userStack.icon;
     createdBy = userStack.createdBy;
     stackSlug = userStack.slug;
+    isPublic = userStack.public;
   }
 
   const isOwner = !isCurated && !!session && (
@@ -113,7 +116,12 @@ export default async function StackPage({ params }: { params: { slug: string } }
   const orderedSkills = skillSlugs.map(slug => skills.find(s => s.slug === slug)).filter(Boolean) as Skill[];
   const orderedAgents = agentSlugs.map(slug => skills.find(s => s.slug === slug)).filter(Boolean) as Skill[];
   const totalItems = orderedServers.length + orderedSkills.length + orderedAgents.length;
-  const installCmd = `mcp install-stack ${stackSlug}`;
+  const installCmd = `codestack install-stack ${stackSlug}`;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://mcp-registry-sigma.vercel.app";
+  const pluginCmds = [
+    `claude plugin marketplace add ${baseUrl}/api/plugins/marketplace.json`,
+    `claude plugin install ${stackSlug}@codestack`,
+  ];
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
@@ -163,8 +171,27 @@ export default async function StackPage({ params }: { params: { slug: string } }
             <CopyButton text={installCmd} />
           </div>
           <p className="text-xs text-gray-600">
-            Installs all {totalItems} items · Requires{" "}
+            Installs all {totalItems} items in every client it finds · Requires{" "}
             <span className="font-mono">npm install -g @diegoalvarezf/codestack</span>
+          </p>
+        </div>
+      )}
+
+      {/* Claude Code plugin */}
+      {totalItems > 0 && isPublic && (
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-10 -mt-6">
+          <p className="text-sm text-gray-300 mb-3">
+            <span className="font-medium">Claude Code plugin</span>
+            <span className="text-gray-500"> · servers, skills and agents in one plugin, updated from Codestack</span>
+          </p>
+          {pluginCmds.map((cmd) => (
+            <div key={cmd} className="flex items-center justify-between gap-4 bg-gray-950 rounded-lg px-4 py-3 mb-2">
+              <span className="font-mono text-xs sm:text-sm text-orange-400 break-all">{cmd}</span>
+              <CopyButton text={cmd} />
+            </div>
+          ))}
+          <p className="text-xs text-gray-600">
+            Or with the CLI: <span className="font-mono">codestack plugin {stackSlug}</span>
           </p>
         </div>
       )}

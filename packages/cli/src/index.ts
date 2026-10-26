@@ -8,13 +8,14 @@ import { removeCommand } from "./commands/remove.js";
 import { syncCommand } from "./commands/sync.js";
 import { installSkillCommand } from "./commands/install-skill.js";
 import { installStackCommand } from "./commands/install-stack.js";
+import { pluginCommand } from "./commands/plugin.js";
 
 const program = new Command();
 
 program
-  .name("mcp")
-  .description(chalk.bold("Codestack CLI") + " — Install and manage MCP servers")
-  .version("0.1.0");
+  .name("codestack")
+  .description(chalk.bold("Codestack CLI") + " — Install MCP servers, skills and agents")
+  .version("0.3.0");
 
 program
   .command("install <slug>")
@@ -77,7 +78,7 @@ program
 
 program
   .command("install-skill <slug>")
-  .description("Install a prompt or agent from Codestack Skills")
+  .description("Install a skill (Agent Skills format) or a Claude Code agent")
   .action(async (slug: string) => {
     await installSkillCommand(slug).catch((err) => {
       console.error(chalk.red("Error:"), err.message);
@@ -90,6 +91,18 @@ program
   .description("Install all servers, skills, and agents in a stack")
   .action(async (slug: string) => {
     await installStackCommand(slug).catch((err) => {
+      console.error(chalk.red("Error:"), err.message);
+      process.exit(1);
+    });
+  });
+
+program
+  .command("plugin [stack]")
+  .description("Install a stack, or your team's setup, as a Claude Code plugin")
+  .option("-t, --team <slug>", "Team slug")
+  .option("--token <token>", "Team invite token")
+  .action(async (stack: string | undefined, opts: { team?: string; token?: string }) => {
+    await pluginCommand(stack, opts).catch((err) => {
       console.error(chalk.red("Error:"), err.message);
       process.exit(1);
     });

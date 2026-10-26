@@ -48,7 +48,8 @@ export default async function TeamPage({
   const isOwner = membership.role === "owner";
   const baseUrl = "https://mcp-registry-sigma.vercel.app";
   const inviteUrl = `${baseUrl}/join/${team.inviteToken}`;
-  const syncCmd = `mcp sync --team ${team.slug} --token ${team.inviteToken}`;
+  const syncCmd = `codestack sync --team ${team.slug} --token ${team.inviteToken}`;
+  const pluginCmd = `codestack plugin --team ${team.slug} --token ${team.inviteToken}`;
 
   const slugs = team.servers.map((s) => s.serverSlug);
   const servers = slugs.length > 0
@@ -128,7 +129,7 @@ export default async function TeamPage({
               <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 text-sm text-gray-400">
                 <p className="font-medium text-white mb-1">What are skills?</p>
                 <p>
-                  <strong className="text-purple-300">Prompts</strong> become slash commands in Claude Code
+                  <strong className="text-purple-300">Prompts</strong> become Agent Skills for Claude Code, Codex, Copilot and more
                   for every team member (e.g. <code className="bg-gray-800 px-1 rounded">/review-pr</code>).
                 </p>
                 <p className="mt-1">
@@ -136,7 +137,7 @@ export default async function TeamPage({
                   a specific system prompt and tool set.
                 </p>
                 <p className="mt-1 text-gray-500">
-                  Everything syncs automatically when a member runs <code className="bg-gray-800 px-1 rounded text-xs">mcp sync --team {team.slug}</code>.
+                  Everything syncs automatically when a member runs <code className="bg-gray-800 px-1 rounded text-xs">codestack sync --team {team.slug}</code>.
                 </p>
               </div>
               <SkillList teamSlug={team.slug} skills={team.skills} isOwner={isOwner} />
@@ -156,6 +157,13 @@ export default async function TeamPage({
               <div className="flex items-center justify-between gap-4 font-mono text-sm">
                 <span className="text-green-400 break-all">{syncCmd}</span>
                 <CopyButton text={syncCmd} />
+              </div>
+              <p className="text-xs text-gray-500 mt-4 mb-2">
+                Or, in Claude Code, as a plugin that stays in sync with the team:
+              </p>
+              <div className="flex items-center justify-between gap-4 font-mono text-sm">
+                <span className="text-orange-400 break-all">{pluginCmd}</span>
+                <CopyButton text={pluginCmd} />
               </div>
               <p className="text-xs text-gray-600 mt-2">
                 Requires <a href="/install-cli" className="text-blue-400/70 hover:text-blue-400">Codestack CLI</a>
@@ -209,7 +217,7 @@ export default async function TeamPage({
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-purple-400 mt-0.5">✓</span>
-                <span>Slash commands → <code className="text-xs bg-gray-800 px-1 rounded">~/.claude/commands/</code></span>
+                <span>Skills → <code className="text-xs bg-gray-800 px-1 rounded">~/.claude/skills/</code> + <code className="text-xs bg-gray-800 px-1 rounded">~/.agents/skills/</code></span>
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-orange-400 mt-0.5">✓</span>

@@ -3,7 +3,7 @@ import ora from "ora";
 import inquirer from "inquirer";
 import { fetchServer, incrementDownload } from "../lib/api.js";
 import { detectClients } from "../lib/detect.js";
-import { installForClient, isAlreadyInstalled } from "../lib/config.js";
+import { installForClient, isAlreadyInstalled, isRemoteServer, remoteUnsupportedReason } from "../lib/config.js";
 
 export async function installCommand(slug: string, envOverrides: Record<string, string> = {}) {
   const spinner = ora(`Looking up ${chalk.bold(slug)}...`).start();
@@ -11,7 +11,7 @@ export async function installCommand(slug: string, envOverrides: Record<string, 
   const server = await fetchServer(slug).catch(() => null);
   if (!server) {
     spinner.fail(`"${slug}" not found in Codestack.`);
-    console.log(chalk.gray(`  Try: npx @codestack/cli search ${slug}`));
+    console.log(chalk.gray(`  Try: codestack search ${slug}`));
     process.exit(1);
   }
 
@@ -48,9 +48,17 @@ export async function installCommand(slug: string, envOverrides: Record<string, 
     process.exit(1);
   }
 
+  const remote = isRemoteServer(server);
+  const remoteUrl = remote && server.configJson ? (JSON.parse(server.configJson).url as string) : "";
+
   for (const client of detected) {
     const updating = isAlreadyInstalled(client.id, server.slug);
     const s = ora(`${updating ? "Updating" : "Installing"} in ${chalk.bold(client.label)}...`).start();
+    const skip = remote ? remoteUnsupportedReason(client.id, remoteUrl) : null;
+    if (skip) {
+      s.warn(`${chalk.bold(client.label)}  ${chalk.gray(skip)}`);
+      continue;
+    }
     try {
       const configPath = installForClient(client.id, server, envValues);
       s.succeed(`${chalk.bold(client.label)}  ${chalk.gray(configPath)}`);
@@ -61,6 +69,9 @@ export async function installCommand(slug: string, envOverrides: Record<string, 
 
   console.log();
   console.log(chalk.green(`✓ ${server.name} installed`) + chalk.gray("  Restart your client to activate."));
+  if (remote) {
+    console.log(chalk.gray("  Remote server: sign in when your client asks (in Claude Code, run /mcp)."));
+  }
   if (server.tools?.length) {
     console.log(chalk.gray(`  Tools: ${server.tools.slice(0, 6).join(", ")}${server.tools.length > 6 ? ` +${server.tools.length - 6} more` : ""}`));
   }

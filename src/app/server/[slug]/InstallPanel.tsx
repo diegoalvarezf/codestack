@@ -22,9 +22,13 @@ const CONFIG_PATHS: Record<Client, string> = {
   openclaw:         "~/.openclaw/openclaw.json",
 };
 
-interface Entry { command: string; args: string[]; env?: Record<string, string> }
+interface StdioEntry { command: string; args: string[]; env?: Record<string, string> }
+interface RemoteEntry { url: string; headers?: Record<string, string> }
+type Entry = StdioEntry | RemoteEntry;
 
-function parseInstallCmd(cmd: string): Entry {
+const isRemote = (e: Entry): e is RemoteEntry => "url" in e;
+
+function parseInstallCmd(cmd: string): StdioEntry {
   const parts = cmd.trim().split(/\s+/);
   return { command: parts[0], args: parts.slice(1) };
 }
@@ -38,15 +42,27 @@ function buildEntry(configJson: string | null, installCmd: string | null): Entry
 function buildVSCodeUri(slug: string, configJson: string | null, installCmd: string | null): string | null {
   try {
     const entry = buildEntry(configJson, installCmd);
-    const payload = JSON.stringify({ name: slug, ...entry });
+    const payload = JSON.stringify({ name: slug, ...(isRemote(entry) ? { type: "http" } : {}), ...entry });
     return `vscode:mcp/install?${encodeURIComponent(payload)}`;
   } catch {
     return null;
   }
 }
 
+// Remote servers can't go in these clients' config files.
+const REMOTE_NOTES: Partial<Record<Client, string>> = {
+  "claude-desktop": "Remote servers are added in Claude Desktop under Settings → Connectors → Add custom connector, with this URL:",
+  continue: "Add this remote server URL in Continue's MCP settings:",
+  openclaw: "Add this remote server URL in OpenClaw's MCP settings:",
+};
+
 function buildJsonConfig(client: Client, slug: string, configJson: string | null, installCmd: string | null): string {
   const entry = buildEntry(configJson, installCmd);
+  if (isRemote(entry)) {
+    if (REMOTE_NOTES[client]) return entry.url;
+    const remote = client === "claude-code" ? { type: "http", ...entry } : entry;
+    return JSON.stringify({ mcpServers: { [slug]: remote } }, null, 2);
+  }
   if (client === "continue") {
     return JSON.stringify({ mcpServers: [{ name: slug, command: entry.command, args: entry.args, ...(entry.env ? { env: entry.env } : {}) }] }, null, 2);
   }
@@ -69,6 +85,7 @@ export function InstallPanel({ slug, installCmd, configJson, envVars }: Props) {
   const vscodeUri = buildVSCodeUri(slug, configJson, installCmd);
   const npxCmd = `npx @diegoalvarezf/codestack install ${slug}`;
   const jsonConfig = buildJsonConfig(activeClient, slug, configJson, installCmd);
+  const remote = isRemote(buildEntry(configJson, installCmd));
 
   function copy(text: string, fn: (v: boolean) => void) {
     navigator.clipboard.writeText(text).then(() => {
@@ -86,7 +103,9 @@ export function InstallPanel({ slug, installCmd, configJson, envVars }: Props) {
             <span className="text-gray-600 select-none">$ </span>
             <span className="text-white">{npxCmd}</span>
           </div>
-          <p className="text-xs text-gray-600 mt-1">auto-installs to all detected clients</p>
+          <p className="text-xs text-gray-600 mt-1">
+            {remote ? "remote server · sign in with OAuth from your client" : "auto-installs to all detected clients"}
+          </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {vscodeUri && (
@@ -152,6 +171,9 @@ export function InstallPanel({ slug, installCmd, configJson, envVars }: Props) {
               </button>
             </div>
 
+            {remote && REMOTE_NOTES[activeClient] && (
+              <p className="px-4 pt-3 text-xs text-gray-500">{REMOTE_NOTES[activeClient]}</p>
+            )}
             <pre className="px-4 py-4 text-xs text-gray-400 bg-gray-950/30 overflow-x-auto font-mono leading-relaxed">
               {jsonConfig}
             </pre>

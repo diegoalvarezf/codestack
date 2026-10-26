@@ -137,8 +137,8 @@ export const translations = {
     whatHappensInstall: "What happens when you install it",
     skillStep1Title: "You run the install command",
     skillStep1Desc: "Codestack CLI downloads this prompt from the registry.",
-    skillStep2Title: "Saved as a file in Claude Code",
-    skillStep2Desc: "Claude Code reads all .md files in this folder as slash commands.",
+    skillStep2Title: "Saved as an Agent Skill",
+    skillStep2Desc: "Each skill is a folder with a SKILL.md file. Claude Code, Codex, Copilot, Gemini CLI, OpenCode and Cursor load them.",
     skillStep3Title: "Use it in any conversation",
     skillStep3Desc: "Claude runs the prompt against your current file or selection — no copy-paste needed.",
     skillStep3Sub: "in Claude Code (after restart)",
@@ -149,7 +149,7 @@ export const translations = {
     lookingForAgentsDesc: "Agents run with a full system prompt and persistent behavior — not just a one-off command.",
     browseAgents: "Browse agents →",
     shareWithTeam: "Share with your team",
-    shareSkillTeamDesc: "Add this skill to your team so everyone gets it on mcp sync.",
+    shareSkillTeamDesc: "Add this skill to your team so everyone gets it on codestack sync.",
 
     // Agent detail
     allAgentsBack: "← All agents",
@@ -169,7 +169,7 @@ export const translations = {
     lookingForSkills: "Looking for Slash commands?",
     lookingForSkillsDesc: "Skills are one-off prompts you invoke with /command.",
     browseSkills: "Browse skills →",
-    shareAgentTeamDesc: "Add this agent to your team so everyone gets it on mcp sync.",
+    shareAgentTeamDesc: "Add this agent to your team so everyone gets it on codestack sync.",
     author: "Author",
     installSidebar: "Install",
 
@@ -320,8 +320,8 @@ export const translations = {
     whatHappensInstall: "Qué ocurre al instalarla",
     skillStep1Title: "Ejecutas el comando de instalación",
     skillStep1Desc: "Codestack CLI descarga este prompt del registro.",
-    skillStep2Title: "Se guarda como archivo en Claude Code",
-    skillStep2Desc: "Claude Code lee todos los archivos .md de esta carpeta como slash commands.",
+    skillStep2Title: "Se guarda como Agent Skill",
+    skillStep2Desc: "Cada skill es una carpeta con un SKILL.md. La cargan Claude Code, Codex, Copilot, Gemini CLI, OpenCode y Cursor.",
     skillStep3Title: "Úsalo en cualquier conversación",
     skillStep3Desc: "Claude ejecuta el prompt sobre tu archivo o selección actual — sin copiar y pegar.",
     skillStep3Sub: "en Claude Code (tras reiniciar)",
@@ -332,7 +332,7 @@ export const translations = {
     lookingForAgentsDesc: "Los agentes tienen un system prompt persistente — no son un comando puntual.",
     browseAgents: "Ver agentes →",
     shareWithTeam: "Comparte con tu equipo",
-    shareSkillTeamDesc: "Añade esta skill a tu equipo para que todos la reciban con mcp sync.",
+    shareSkillTeamDesc: "Añade esta skill a tu equipo para que todos la reciban con codestack sync.",
 
     // Agent detail
     allAgentsBack: "← Todos los agentes",
@@ -352,7 +352,7 @@ export const translations = {
     lookingForSkills: "¿Buscas Slash commands?",
     lookingForSkillsDesc: "Las skills son prompts puntuales que invocas con /comando.",
     browseSkills: "Ver skills →",
-    shareAgentTeamDesc: "Añade este agente a tu equipo para que todos lo reciban con mcp sync.",
+    shareAgentTeamDesc: "Añade este agente a tu equipo para que todos lo reciban con codestack sync.",
     author: "Autor",
     installSidebar: "Instalar",
 

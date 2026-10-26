@@ -93,7 +93,7 @@ export default async function ServerPage({ params }: { params: { slug: string } 
         {/* Main content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Install panel */}
-          {server.installCmd && (
+          {(server.installCmd || server.configJson) && (
             <section>
               <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">
                 Install

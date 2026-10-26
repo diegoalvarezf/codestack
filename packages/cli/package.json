@@ -1,6 +1,6 @@
 {
   "name": "@diegoalvarezf/codestack",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Install stacks, MCP servers, skills, and agents for your AI dev environment",
   "bin": {
     "codestack": "dist/index.js"
@@ -30,7 +30,7 @@
     "type": "git",
     "url": "https://github.com/diegoalvarezf/codestack"
   },
-  "homepage": "https://codestack.dev/install-cli",
+  "homepage": "https://mcp-registry-sigma.vercel.app/install-cli",
   "dependencies": {
     "commander": "^12.0.0",
     "inquirer": "^9.3.7",

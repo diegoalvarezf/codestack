@@ -17,7 +17,7 @@ export function SkillCard({ skill, featured, savedInLibrary }: { skill: Skill; f
   const [copied, setCopied] = useState(false);
   const tags = parseTags(skill);
   const avatar = getGithubAvatar(skill.authorUrl);
-  const installCmd = `mcp install-skill ${skill.slug}`;
+  const installCmd = `codestack install-skill ${skill.slug}`;
 
   function handleCopy(e: React.MouseEvent) {
     e.preventDefault();
