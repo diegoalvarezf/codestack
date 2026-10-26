@@ -52,6 +52,15 @@ export async function GET(req: NextRequest) {
   const where: any = {};
   if (tag) where.tags = { contains: tag };
   if (client) where.clients = { contains: client };
+  // Filter in the database, before the limit, so matches past the first page are found
+  if (query) {
+    where.OR = [
+      { name: { contains: query, mode: "insensitive" } },
+      { description: { contains: query, mode: "insensitive" } },
+      { tags: { contains: query.toLowerCase() } },
+      { tools: { contains: query.toLowerCase() } },
+    ];
+  }
 
   const servers = await prisma.server.findMany({
     where,
@@ -59,18 +68,7 @@ export async function GET(req: NextRequest) {
     take: limit,
   });
 
-  let results = servers.map(parseServer);
-
-  if (query) {
-    const q = query.toLowerCase();
-    results = results.filter(
-      (s) =>
-        s.name.toLowerCase().includes(q) ||
-        s.description.toLowerCase().includes(q) ||
-        s.tags.some((t: string) => t.includes(q)) ||
-        s.tools.some((t: string) => t.includes(q))
-    );
-  }
+  const results = servers.map(parseServer);
 
   return NextResponse.json({ servers: results, total: results.length });
 }
