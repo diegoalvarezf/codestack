@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm](https://img.shields.io/npm/v/@diegoalvarezf/codestack)](https://www.npmjs.com/package/@diegoalvarezf/codestack)
 
-**[codestack-sigma.vercel.app](https://codestack-sigma.vercel.app)**
+**[mcp-registry-sigma.vercel.app](https://mcp-registry-sigma.vercel.app)**
 
 ## What is this?
 
