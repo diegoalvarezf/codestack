@@ -5,23 +5,21 @@ export async function searchCommand(query: string) {
   const servers = await searchServers(query, 10);
 
   if (servers.length === 0) {
-    console.log(chalk.yellow(`No se encontraron resultados para "${query}"`));
+    console.log(chalk.yellow(`No results for "${query}"`));
     return;
   }
 
-  console.log(chalk.bold(`\n${servers.length} resultados para "${query}":\n`));
+  console.log(chalk.bold(`\n${servers.length} result${servers.length !== 1 ? "s" : ""} for "${query}":\n`));
 
   for (const s of servers) {
     const badges = [
       s.verified ? chalk.blue("✓ verified") : "",
-      s.installCmd ? chalk.green("● installable") : chalk.gray("○ manual"),
+      s.transport === "http" || s.transport === "sse" ? chalk.magenta("● remote") : chalk.green("● local"),
     ].filter(Boolean).join("  ");
 
     console.log(`  ${chalk.bold(s.name)} ${chalk.gray(`(${s.slug})`)}  ${badges}`);
     console.log(`  ${chalk.gray(s.description)}`);
-    if (s.installCmd) {
-      console.log(`  ${chalk.cyan(`mcp install ${s.slug}`)}`);
-    }
+    console.log(`  ${chalk.cyan(`codestack install ${s.slug}`)}`);
     console.log();
   }
 }

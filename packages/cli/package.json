@@ -1,6 +1,6 @@
 {
   "name": "@diegoalvarezf/codestack",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Install stacks, MCP servers, skills, and agents for your AI dev environment",
   "bin": {
     "codestack": "dist/index.js"

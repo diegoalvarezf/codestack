@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name("codestack")
   .description(chalk.bold("Codestack CLI") + " — Install MCP servers, skills and agents")
-  .version("0.3.0");
+  .version("0.3.1");
 
 program
   .command("install <slug>")
